@@ -1,6 +1,7 @@
 import express, { Request, Response, NextFunction } from 'express';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
+import helmet from 'helmet';
 import path from 'path';
 import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
@@ -26,13 +27,29 @@ const PORT = process.env.PORT || 3000;
 // Initialize seed data on startup
 await ensureSeededData();
 
-// Middleware
-app.use(cors({
-  origin: true,
-  credentials: true
-}));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+// OWASP A05: Security Misconfiguration Protection
+app.disable('x-powered-by');
+
+// OWASP A03 & A05: Mount Helmet for HTTP Security Headers
+app.use(
+  helmet({
+    contentSecurityPolicy: false, // Allow inline styles & local scripts for Vite/React dev
+    crossOriginEmbedderPolicy: false
+  })
+);
+
+// OWASP A05: Restricted CORS Configuration
+app.use(
+  cors({
+    origin: true,
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'x-session-id']
+  })
+);
+
+app.use(express.json({ limit: '1mb' }));
+app.use(express.urlencoded({ extended: true, limit: '1mb' }));
 app.use(cookieParser());
 
 // Session Middleware
@@ -81,23 +98,24 @@ app.get('*', (req: Request, res: Response) => {
   });
 });
 
-// Global Error Handler
+// OWASP A05: Global Error Handler (Zero stack trace leaks to client)
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   console.error('Unhandled server error:', err);
   res.status(err.status || 500).json({
     success: false,
     error: {
       code: err.code || 'INTERNAL_SERVER_ERROR',
-      message: err.message || 'An unexpected server error occurred.'
+      message: 'An unexpected server error occurred. Please try again later.'
     }
   });
 });
 
 app.listen(PORT, () => {
   console.log(`====================================================`);
-  console.log(` Mahesh Fitness Center Simulator`);
+  console.log(` Mahesh Fitness Center Simulator (OWASP Hardened)`);
   console.log(` Running on: http://localhost:${PORT}`);
   console.log(` Data store: data/runtime.json`);
+  console.log(` Security Headers: Enabled (Helmet + RateLimiting)`);
   console.log(` API groups: 6 (/api/auth, /api/member, /api/classes, /api/membership, /api/admin, /api/system)`);
   console.log(`====================================================`);
 });

@@ -10,7 +10,7 @@
       "status": "active",
       "createdAt": "2026-08-11T12:40:35.647Z",
       "updatedAt": "2026-08-11T12:40:35.647Z",
-      "lastLoginAt": "2026-08-11T14:10:00.454Z"
+      "lastLoginAt": "2026-08-11T16:17:26.061Z"
     },
     {
       "id": "USR-10001",
@@ -22,7 +22,7 @@
       "status": "active",
       "createdAt": "2026-01-15T08:00:00.000Z",
       "updatedAt": "2026-08-11T12:40:35.647Z",
-      "lastLoginAt": "2026-08-11T14:06:27.914Z"
+      "lastLoginAt": "2026-08-11T16:07:59.017Z"
     },
     {
       "id": "USR-10002",
@@ -111,6 +111,30 @@
       "status": "active",
       "createdAt": "2026-02-01T10:00:00.000Z",
       "updatedAt": "2026-08-11T12:40:35.647Z"
+    },
+    {
+      "id": "USR-43451",
+      "name": "shyam",
+      "email": "shyam@gmail.com",
+      "phone": "9876543210",
+      "passwordHash": "$2a$10$HFbPRcyOaDHs26vB6dtAB.3sDvl7p/HE6x/Pejf8bqDZO4MXphQj2",
+      "role": "member",
+      "status": "active",
+      "createdAt": "2026-08-11T16:13:29.531Z",
+      "updatedAt": "2026-08-11T16:13:29.531Z",
+      "lastLoginAt": "2026-08-11T16:13:29.531Z"
+    },
+    {
+      "id": "USR-80881",
+      "name": "radha",
+      "email": "radha@gmail.com",
+      "phone": "9876543210",
+      "passwordHash": "$2a$10$5/gLMluahzhJSOOXu8PD.OibZsvPx47l..6lU0esalEZY0vvwyAce",
+      "role": "member",
+      "status": "active",
+      "createdAt": "2026-08-11T16:23:36.023Z",
+      "updatedAt": "2026-08-11T16:23:36.023Z",
+      "lastLoginAt": "2026-08-11T16:23:36.023Z"
     }
   ],
   "memberProfiles": [
@@ -239,6 +263,24 @@
       },
       "createdAt": "2026-02-01T10:00:00.000Z",
       "updatedAt": "2026-08-11T12:40:35.647Z"
+    },
+    {
+      "id": "MEM-64519",
+      "userId": "USR-43451",
+      "fitnessGoal": "strength",
+      "heightCm": 175,
+      "dateOfBirth": "1998-01-01",
+      "createdAt": "2026-08-11T16:13:29.531Z",
+      "updatedAt": "2026-08-11T16:13:29.531Z"
+    },
+    {
+      "id": "MEM-45465",
+      "userId": "USR-80881",
+      "fitnessGoal": "strength",
+      "heightCm": 175,
+      "dateOfBirth": "1998-01-01",
+      "createdAt": "2026-08-11T16:23:36.023Z",
+      "updatedAt": "2026-08-11T16:23:36.023Z"
     }
   ],
   "membershipPlans": [
@@ -292,6 +334,26 @@
     }
   ],
   "memberships": [
+    {
+      "id": "SUB-34530",
+      "memberId": "MEM-45465",
+      "planId": "PLAN-10002",
+      "status": "active",
+      "startDate": "2026-08-11T16:24:39.298Z",
+      "endDate": "2026-11-11T16:24:39.298Z",
+      "autoRenew": false,
+      "createdAt": "2026-08-11T16:24:39.298Z"
+    },
+    {
+      "id": "SUB-24209",
+      "memberId": "MEM-64519",
+      "planId": "PLAN-10003",
+      "status": "active",
+      "startDate": "2026-08-11T16:13:47.648Z",
+      "endDate": "2028-08-11T16:13:47.648Z",
+      "autoRenew": false,
+      "createdAt": "2026-08-11T16:13:47.648Z"
+    },
     {
       "id": "SUB-10001",
       "memberId": "MEM-10001",
@@ -416,7 +478,7 @@
       "startTime": "07:00",
       "endTime": "08:00",
       "capacity": 18,
-      "bookedCount": 14,
+      "bookedCount": 15,
       "location": "Studio A (Weight Room)",
       "status": "scheduled",
       "createdAt": "2026-08-01T00:00:00.000Z"
@@ -514,6 +576,14 @@
   ],
   "bookings": [
     {
+      "id": "BOOK-21804",
+      "classId": "CLS-10001",
+      "memberId": "MEM-64519",
+      "status": "confirmed",
+      "bookedAt": "2026-08-11T16:16:39.078Z",
+      "cancelledAt": null
+    },
+    {
       "id": "BOOK-10001",
       "classId": "CLS-10001",
       "memberId": "MEM-10001",
@@ -550,6 +620,39 @@
     }
   ],
   "payments": [
+    {
+      "id": "PAY-21694",
+      "memberId": "MEM-45465",
+      "membershipId": "SUB-34530",
+      "amountPaise": 749900,
+      "currency": "INR",
+      "status": "completed",
+      "method": "simulated_card",
+      "description": "Premium Subscription",
+      "createdAt": "2026-08-11T16:24:39.298Z"
+    },
+    {
+      "id": "PAY-79892",
+      "memberId": "MEM-64519",
+      "membershipId": "SUB-24209",
+      "amountPaise": 2499900,
+      "currency": "INR",
+      "status": "completed",
+      "method": "simulated_card",
+      "description": "Elite VIP Renewal",
+      "createdAt": "2026-08-11T16:15:14.101Z"
+    },
+    {
+      "id": "PAY-52016",
+      "memberId": "MEM-64519",
+      "membershipId": "SUB-24209",
+      "amountPaise": 2499900,
+      "currency": "INR",
+      "status": "completed",
+      "method": "simulated_card",
+      "description": "Elite VIP Subscription",
+      "createdAt": "2026-08-11T16:13:47.648Z"
+    },
     {
       "id": "PAY-10001",
       "memberId": "MEM-10001",
@@ -619,6 +722,15 @@
   ],
   "activities": [
     {
+      "id": "ACT-18817",
+      "memberId": "MEM-64519",
+      "type": "workout",
+      "durationMinutes": 45,
+      "calories": 320,
+      "date": "2026-08-11",
+      "source": "simulated"
+    },
+    {
       "id": "ACT-10001",
       "memberId": "MEM-10001",
       "type": "workout",
@@ -648,6 +760,126 @@
   ],
   "sessions": [],
   "auditLogs": [
+    {
+      "id": "AUDIT-514268",
+      "userId": "USR-80881",
+      "action": "LOGOUT",
+      "timestamp": "2026-08-11T16:25:05.036Z"
+    },
+    {
+      "id": "AUDIT-522218",
+      "userId": "USR-80881",
+      "action": "MEMBERSHIP_PURCHASE",
+      "timestamp": "2026-08-11T16:24:39.308Z",
+      "metadata": {
+        "planId": "PLAN-10002",
+        "subscriptionId": "SUB-34530",
+        "paymentId": "PAY-21694",
+        "amountPaise": 749900
+      }
+    },
+    {
+      "id": "AUDIT-588909",
+      "userId": "USR-80881",
+      "action": "SIGNUP",
+      "timestamp": "2026-08-11T16:23:36.127Z",
+      "metadata": {
+        "email": "radha@gmail.com"
+      }
+    },
+    {
+      "id": "AUDIT-668846",
+      "userId": "USR-10000",
+      "action": "LOGOUT",
+      "timestamp": "2026-08-11T16:18:29.179Z"
+    },
+    {
+      "id": "AUDIT-296980",
+      "userId": "USR-10000",
+      "action": "LOGIN",
+      "timestamp": "2026-08-11T16:17:26.072Z",
+      "metadata": {
+        "email": "admin@maheshfitness.local"
+      }
+    },
+    {
+      "id": "AUDIT-332049",
+      "userId": "USR-43451",
+      "action": "LOGOUT",
+      "timestamp": "2026-08-11T16:17:17.005Z"
+    },
+    {
+      "id": "AUDIT-417736",
+      "userId": "USR-43451",
+      "action": "CLASS_BOOKED",
+      "timestamp": "2026-08-11T16:16:39.084Z",
+      "metadata": {
+        "classId": "CLS-10001",
+        "bookingId": "BOOK-21804"
+      }
+    },
+    {
+      "id": "AUDIT-629928",
+      "userId": "USR-43451",
+      "action": "MEMBERSHIP_RENEWAL",
+      "timestamp": "2026-08-11T16:15:14.111Z",
+      "metadata": {
+        "subscriptionId": "SUB-24209",
+        "paymentId": "PAY-79892",
+        "newEndDate": "2028-08-11T16:13:47.648Z"
+      }
+    },
+    {
+      "id": "AUDIT-527867",
+      "userId": "USR-43451",
+      "action": "MEMBERSHIP_PURCHASE",
+      "timestamp": "2026-08-11T16:13:47.666Z",
+      "metadata": {
+        "planId": "PLAN-10003",
+        "subscriptionId": "SUB-24209",
+        "paymentId": "PAY-52016",
+        "amountPaise": 2499900
+      }
+    },
+    {
+      "id": "AUDIT-814992",
+      "userId": "USR-43451",
+      "action": "SIGNUP",
+      "timestamp": "2026-08-11T16:13:29.669Z",
+      "metadata": {
+        "email": "shyam@gmail.com"
+      }
+    },
+    {
+      "id": "AUDIT-732435",
+      "userId": "USR-10000",
+      "action": "LOGOUT",
+      "timestamp": "2026-08-11T16:10:01.242Z"
+    },
+    {
+      "id": "AUDIT-990805",
+      "userId": "USR-10000",
+      "action": "LOGIN",
+      "timestamp": "2026-08-11T16:08:50.265Z",
+      "metadata": {
+        "email": "admin@maheshfitness.local"
+      }
+    },
+    {
+      "id": "AUDIT-464887",
+      "userId": "USR-10001",
+      "action": "LOGOUT",
+      "timestamp": "2026-08-11T16:08:46.110Z"
+    },
+    {
+      "id": "AUDIT-329673",
+      "userId": "USR-10001",
+      "action": "LOGIN",
+      "timestamp": "2026-08-11T16:07:59.037Z",
+      "metadata": {
+        "email": "member@maheshfitness.local"
+      }
+    },
     {
       "id": "AUDIT-359896",
       "userId": "USR-10000",

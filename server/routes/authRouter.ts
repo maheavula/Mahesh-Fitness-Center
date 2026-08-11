@@ -3,24 +3,38 @@ import bcrypt from 'bcryptjs';
 import { persistenceService } from '../services/persistenceService.js';
 import { sessionService, AuthenticatedRequest, requireAuth } from '../services/sessionService.js';
 import { logAudit } from '../services/auditService.js';
+import { authRateLimiter, sanitizeString, sanitizeUser, validatePasswordStrength } from '../middleware/security.js';
 import { User, MemberProfile } from '../types/index.js';
 
 export const authRouter = Router();
 
 // POST /api/auth/signup
-authRouter.post('/signup', async (req: AuthenticatedRequest, res: Response) => {
+authRouter.post('/signup', authRateLimiter, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { name, email, phone, password, fitnessGoal, heightCm, dateOfBirth } = req.body;
 
-    if (!name || !email || !password) {
+    const cleanName = sanitizeString(name);
+    const cleanEmail = sanitizeString(email).toLowerCase();
+    const cleanPhone = sanitizeString(phone);
+
+    if (!cleanName || !cleanEmail || !password) {
       res.status(400).json({
         success: false,
-        error: { code: 'INVALID_INPUT', message: 'Name, email, and password are required.' }
+        error: { code: 'INVALID_INPUT', message: 'Name, valid email, and password are required.' }
       });
       return;
     }
 
-    const cleanEmail = email.trim().toLowerCase();
+    // OWASP A07: Password Strength Check
+    const passCheck = validatePasswordStrength(password);
+    if (!passCheck.valid) {
+      res.status(400).json({
+        success: false,
+        error: { code: 'WEAK_PASSWORD', message: passCheck.message }
+      });
+      return;
+    }
+
     const data = await persistenceService.getData();
 
     // Check duplicate
@@ -40,9 +54,9 @@ authRouter.post('/signup', async (req: AuthenticatedRequest, res: Response) => {
 
     const newUser: User = {
       id: userId,
-      name: name.trim(),
+      name: cleanName,
       email: cleanEmail,
-      phone: phone ? phone.trim() : '',
+      phone: cleanPhone,
       passwordHash,
       role: 'member',
       status: 'active',
@@ -54,9 +68,9 @@ authRouter.post('/signup', async (req: AuthenticatedRequest, res: Response) => {
     const newProfile: MemberProfile = {
       id: memberId,
       userId,
-      fitnessGoal: fitnessGoal || 'fitness',
+      fitnessGoal: (sanitizeString(fitnessGoal) as any) || 'fitness',
       heightCm: heightCm ? Number(heightCm) : undefined,
-      dateOfBirth: dateOfBirth || undefined,
+      dateOfBirth: dateOfBirth ? sanitizeString(dateOfBirth) : undefined,
       createdAt: now,
       updatedAt: now
     };
@@ -66,24 +80,20 @@ authRouter.post('/signup', async (req: AuthenticatedRequest, res: Response) => {
       d.memberProfiles.push(newProfile);
     });
 
-    const { session, token } = await sessionService.createSession(userId);
+    // OWASP A07: Session Fixation Defense - Destroy previous session if present
+    const existingToken = sessionService.extractTokenFromRequest(req);
+    if (existingToken) {
+      await sessionService.destroySession(existingToken);
+    }
+
+    const { token } = await sessionService.createSession(userId);
     sessionService.setSessionCookie(res, token);
     await logAudit(userId, 'SIGNUP', { email: cleanEmail });
-
-    const safeUser = {
-      id: newUser.id,
-      name: newUser.name,
-      email: newUser.email,
-      phone: newUser.phone,
-      role: newUser.role,
-      status: newUser.status,
-      createdAt: newUser.createdAt
-    };
 
     res.status(201).json({
       success: true,
       data: {
-        user: safeUser,
+        user: sanitizeUser(newUser),
         profile: newProfile,
         token
       }
@@ -91,17 +101,19 @@ authRouter.post('/signup', async (req: AuthenticatedRequest, res: Response) => {
   } catch (err: any) {
     res.status(500).json({
       success: false,
-      error: { code: 'SERVER_ERROR', message: err.message || 'Signup failed' }
+      error: { code: 'SERVER_ERROR', message: 'Signup failed. Please try again.' }
     });
   }
 });
 
 // POST /api/auth/login
-authRouter.post('/login', async (req: AuthenticatedRequest, res: Response) => {
+authRouter.post('/login', authRateLimiter, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { email, password } = req.body;
 
-    if (!email || !password) {
+    const cleanEmail = sanitizeString(email).toLowerCase();
+
+    if (!cleanEmail || !password) {
       res.status(400).json({
         success: false,
         error: { code: 'INVALID_INPUT', message: 'Email and password are required.' }
@@ -109,10 +121,10 @@ authRouter.post('/login', async (req: AuthenticatedRequest, res: Response) => {
       return;
     }
 
-    const cleanEmail = email.trim().toLowerCase();
     const data = await persistenceService.getData();
     const user = data.users.find(u => u.email.toLowerCase() === cleanEmail);
 
+    // OWASP A07: Generic error message to prevent email enumeration
     if (!user) {
       res.status(401).json({
         success: false,
@@ -124,7 +136,7 @@ authRouter.post('/login', async (req: AuthenticatedRequest, res: Response) => {
     if (user.status === 'suspended') {
       res.status(403).json({
         success: false,
-        error: { code: 'ACCOUNT_SUSPENDED', message: 'Your account is suspended. Contact administration.' }
+        error: { code: 'ACCOUNT_SUSPENDED', message: 'Your account has been suspended. Please contact administration.' }
       });
       return;
     }
@@ -142,26 +154,22 @@ authRouter.post('/login', async (req: AuthenticatedRequest, res: Response) => {
     user.lastLoginAt = new Date().toISOString();
     await persistenceService.saveData(data);
 
+    // OWASP A07: Session Fixation Defense - Rotate session ID on authentication
+    const existingToken = sessionService.extractTokenFromRequest(req);
+    if (existingToken) {
+      await sessionService.destroySession(existingToken);
+    }
+
     const { token } = await sessionService.createSession(user.id);
     sessionService.setSessionCookie(res, token);
     await logAudit(user.id, 'LOGIN', { email: cleanEmail });
-
-    const safeUser = {
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      phone: user.phone,
-      role: user.role,
-      status: user.status,
-      lastLoginAt: user.lastLoginAt
-    };
 
     const profile = data.memberProfiles.find(p => p.userId === user.id);
 
     res.json({
       success: true,
       data: {
-        user: safeUser,
+        user: sanitizeUser(user),
         profile,
         token
       }
@@ -169,7 +177,7 @@ authRouter.post('/login', async (req: AuthenticatedRequest, res: Response) => {
   } catch (err: any) {
     res.status(500).json({
       success: false,
-      error: { code: 'SERVER_ERROR', message: err.message || 'Login failed' }
+      error: { code: 'SERVER_ERROR', message: 'Login failed. Please try again.' }
     });
   }
 });
@@ -214,21 +222,10 @@ authRouter.get('/me', requireAuth, async (req: AuthenticatedRequest, res: Respon
       }
     }
 
-    const safeUser = {
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      phone: user.phone,
-      role: user.role,
-      status: user.status,
-      createdAt: user.createdAt,
-      lastLoginAt: user.lastLoginAt
-    };
-
     res.json({
       success: true,
       data: {
-        user: safeUser,
+        user: sanitizeUser(user),
         profile,
         subscription: activeSubscription
       }

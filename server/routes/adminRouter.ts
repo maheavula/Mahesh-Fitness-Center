@@ -2,6 +2,7 @@ import { Router, Response } from 'express';
 import { persistenceService } from '../services/persistenceService.js';
 import { AuthenticatedRequest, requireAuth, requireRole, sessionService } from '../services/sessionService.js';
 import { logAudit } from '../services/auditService.js';
+import { sanitizeString, sanitizeUser } from '../middleware/security.js';
 import {
   MembershipPlan,
   Trainer,
@@ -39,11 +40,10 @@ adminRouter.get('/dashboard', async (req: AuthenticatedRequest, res: Response) =
       .filter(p => p.status === 'completed')
       .reduce((acc, p) => acc + p.amountPaise, 0);
 
-    // Build chart data (monthly simulated revenue)
     const revenueByMonth: Record<string, number> = {};
     data.payments.forEach(p => {
       if (p.status === 'completed') {
-        const month = p.createdAt.substring(0, 7); // 'YYYY-MM'
+        const month = p.createdAt.substring(0, 7);
         revenueByMonth[month] = (revenueByMonth[month] || 0) + (p.amountPaise / 100);
       }
     });
@@ -74,7 +74,7 @@ adminRouter.get('/dashboard', async (req: AuthenticatedRequest, res: Response) =
   } catch (err: any) {
     res.status(500).json({
       success: false,
-      error: { code: 'SERVER_ERROR', message: err.message }
+      error: { code: 'SERVER_ERROR', message: 'Failed to fetch admin dashboard' }
     });
   }
 });
@@ -92,7 +92,7 @@ adminRouter.get('/members', async (req: AuthenticatedRequest, res: Response) => 
     }
 
     if (search) {
-      const term = String(search).toLowerCase();
+      const term = sanitizeString(String(search)).toLowerCase();
       memberUsers = memberUsers.filter(u =>
         u.name.toLowerCase().includes(term) ||
         u.email.toLowerCase().includes(term) ||
@@ -106,13 +106,7 @@ adminRouter.get('/members', async (req: AuthenticatedRequest, res: Response) => 
       const plan = sub ? data.membershipPlans.find(p => p.id === sub.planId) : null;
 
       return {
-        id: u.id,
-        name: u.name,
-        email: u.email,
-        phone: u.phone,
-        status: u.status,
-        createdAt: u.createdAt,
-        lastLoginAt: u.lastLoginAt,
+        ...sanitizeUser(u),
         profile,
         subscription: sub ? { ...sub, plan } : null
       };
@@ -125,7 +119,7 @@ adminRouter.get('/members', async (req: AuthenticatedRequest, res: Response) => 
   } catch (err: any) {
     res.status(500).json({
       success: false,
-      error: { code: 'SERVER_ERROR', message: err.message }
+      error: { code: 'SERVER_ERROR', message: 'Failed to list members' }
     });
   }
 });
@@ -154,21 +148,10 @@ adminRouter.get('/members/:id', async (req: AuthenticatedRequest, res: Response)
     const payments = memberId ? data.payments.filter(p => p.memberId === memberId) : [];
     const userAudits = data.auditLogs.filter(a => a.userId === user.id);
 
-    const safeUser = {
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      phone: user.phone,
-      role: user.role,
-      status: user.status,
-      createdAt: user.createdAt,
-      lastLoginAt: user.lastLoginAt
-    };
-
     res.json({
       success: true,
       data: {
-        member: safeUser,
+        member: sanitizeUser(user),
         profile,
         subscriptions,
         bookings,
@@ -180,7 +163,7 @@ adminRouter.get('/members/:id', async (req: AuthenticatedRequest, res: Response)
   } catch (err: any) {
     res.status(500).json({
       success: false,
-      error: { code: 'SERVER_ERROR', message: err.message }
+      error: { code: 'SERVER_ERROR', message: 'Failed to fetch member details' }
     });
   }
 });
@@ -189,7 +172,7 @@ adminRouter.get('/members/:id', async (req: AuthenticatedRequest, res: Response)
 adminRouter.patch('/members/:id/status', async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { id } = req.params;
-    const { status } = req.body; // 'active' | 'suspended'
+    const { status } = req.body;
 
     if (!['active', 'suspended'].includes(status)) {
       res.status(400).json({
@@ -244,14 +227,17 @@ adminRouter.get('/plans', async (req: AuthenticatedRequest, res: Response) => {
     const data = await persistenceService.getData();
     res.json({ success: true, data: { plans: data.membershipPlans } });
   } catch (err: any) {
-    res.status(500).json({ success: false, error: { code: 'SERVER_ERROR', message: err.message } });
+    res.status(500).json({ success: false, error: { code: 'SERVER_ERROR', message: 'Failed to fetch plans' } });
   }
 });
 
 adminRouter.post('/plans', async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { name, description, durationMonths, pricePaise, features } = req.body;
-    if (!name || !pricePaise || !durationMonths) {
+    const cleanName = sanitizeString(name);
+    const cleanDesc = sanitizeString(description);
+
+    if (!cleanName || !pricePaise || !durationMonths) {
       res.status(400).json({ success: false, error: { code: 'INVALID_INPUT', message: 'Name, duration, and price required.' } });
       return;
     }
@@ -259,11 +245,11 @@ adminRouter.post('/plans', async (req: AuthenticatedRequest, res: Response) => {
     const planId = 'PLAN-' + Math.floor(10000 + Math.random() * 90000);
     const newPlan: MembershipPlan = {
       id: planId,
-      name: name.trim(),
-      description: description ? description.trim() : '',
-      durationMonths: Number(durationMonths),
-      pricePaise: Number(pricePaise),
-      features: Array.isArray(features) ? features : [],
+      name: cleanName,
+      description: cleanDesc,
+      durationMonths: Math.max(1, Number(durationMonths)),
+      pricePaise: Math.max(0, Number(pricePaise)),
+      features: Array.isArray(features) ? features.map(f => sanitizeString(f)) : [],
       status: 'active',
       createdAt: new Date().toISOString()
     };
@@ -273,7 +259,7 @@ adminRouter.post('/plans', async (req: AuthenticatedRequest, res: Response) => {
 
     res.status(201).json({ success: true, data: { plan: newPlan } });
   } catch (err: any) {
-    res.status(500).json({ success: false, error: { code: 'SERVER_ERROR', message: err.message } });
+    res.status(500).json({ success: false, error: { code: 'SERVER_ERROR', message: 'Failed to create plan' } });
   }
 });
 
@@ -282,14 +268,17 @@ adminRouter.put('/plans/:id', async (req: AuthenticatedRequest, res: Response) =
     const { id } = req.params;
     const { name, description, durationMonths, pricePaise, features, status } = req.body;
 
+    const cleanName = sanitizeString(name);
+    const cleanDesc = sanitizeString(description);
+
     await persistenceService.updateData(d => {
       const p = d.membershipPlans.find(x => x.id === id);
       if (p) {
-        if (name) p.name = name.trim();
-        if (description !== undefined) p.description = description.trim();
+        if (cleanName) p.name = cleanName;
+        if (cleanDesc !== undefined) p.description = cleanDesc;
         if (durationMonths) p.durationMonths = Number(durationMonths);
         if (pricePaise) p.pricePaise = Number(pricePaise);
-        if (Array.isArray(features)) p.features = features;
+        if (Array.isArray(features)) p.features = features.map(f => sanitizeString(f));
         if (status) p.status = status as PlanStatus;
       }
     });
@@ -297,7 +286,7 @@ adminRouter.put('/plans/:id', async (req: AuthenticatedRequest, res: Response) =
     await logAudit(req.user!.id, 'PLAN_UPDATED', { planId: id });
     res.json({ success: true, data: { message: 'Plan updated.' } });
   } catch (err: any) {
-    res.status(500).json({ success: false, error: { code: 'SERVER_ERROR', message: err.message } });
+    res.status(500).json({ success: false, error: { code: 'SERVER_ERROR', message: 'Failed to update plan' } });
   }
 });
 
@@ -314,7 +303,7 @@ adminRouter.patch('/plans/:id/status', async (req: AuthenticatedRequest, res: Re
     await logAudit(req.user!.id, 'PLAN_UPDATED', { planId: id, status });
     res.json({ success: true, data: { message: `Plan status changed to ${status}.` } });
   } catch (err: any) {
-    res.status(500).json({ success: false, error: { code: 'SERVER_ERROR', message: err.message } });
+    res.status(500).json({ success: false, error: { code: 'SERVER_ERROR', message: 'Failed to update plan status' } });
   }
 });
 
@@ -324,14 +313,18 @@ adminRouter.get('/trainers', async (req: AuthenticatedRequest, res: Response) =>
     const data = await persistenceService.getData();
     res.json({ success: true, data: { trainers: data.trainers } });
   } catch (err: any) {
-    res.status(500).json({ success: false, error: { code: 'SERVER_ERROR', message: err.message } });
+    res.status(500).json({ success: false, error: { code: 'SERVER_ERROR', message: 'Failed to list trainers' } });
   }
 });
 
 adminRouter.post('/trainers', async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { name, specialization, experienceYears, bio, avatar } = req.body;
-    if (!name || !specialization) {
+    const cleanName = sanitizeString(name);
+    const cleanSpec = sanitizeString(specialization);
+    const cleanBio = sanitizeString(bio);
+
+    if (!cleanName || !cleanSpec) {
       res.status(400).json({ success: false, error: { code: 'INVALID_INPUT', message: 'Name and specialization required.' } });
       return;
     }
@@ -339,12 +332,12 @@ adminRouter.post('/trainers', async (req: AuthenticatedRequest, res: Response) =
     const trainerId = 'TRN-' + Math.floor(10000 + Math.random() * 90000);
     const newTrainer: Trainer = {
       id: trainerId,
-      name: name.trim(),
-      specialization: specialization.trim(),
-      experienceYears: Number(experienceYears) || 1,
-      bio: bio ? bio.trim() : '',
+      name: cleanName,
+      specialization: cleanSpec,
+      experienceYears: Math.max(0, Number(experienceYears) || 1),
+      bio: cleanBio,
       status: 'active',
-      avatar: avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
+      avatar: avatar ? sanitizeString(avatar) : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
       createdAt: new Date().toISOString()
     };
 
@@ -353,7 +346,7 @@ adminRouter.post('/trainers', async (req: AuthenticatedRequest, res: Response) =
 
     res.status(201).json({ success: true, data: { trainer: newTrainer } });
   } catch (err: any) {
-    res.status(500).json({ success: false, error: { code: 'SERVER_ERROR', message: err.message } });
+    res.status(500).json({ success: false, error: { code: 'SERVER_ERROR', message: 'Failed to create trainer' } });
   }
 });
 
@@ -362,14 +355,18 @@ adminRouter.put('/trainers/:id', async (req: AuthenticatedRequest, res: Response
     const { id } = req.params;
     const { name, specialization, experienceYears, bio, avatar, status } = req.body;
 
+    const cleanName = sanitizeString(name);
+    const cleanSpec = sanitizeString(specialization);
+    const cleanBio = sanitizeString(bio);
+
     await persistenceService.updateData(d => {
       const t = d.trainers.find(x => x.id === id);
       if (t) {
-        if (name) t.name = name.trim();
-        if (specialization) t.specialization = specialization.trim();
+        if (cleanName) t.name = cleanName;
+        if (cleanSpec) t.specialization = cleanSpec;
         if (experienceYears !== undefined) t.experienceYears = Number(experienceYears);
-        if (bio !== undefined) t.bio = bio.trim();
-        if (avatar) t.avatar = avatar;
+        if (cleanBio !== undefined) t.bio = cleanBio;
+        if (avatar) t.avatar = sanitizeString(avatar);
         if (status) t.status = status as TrainerStatus;
       }
     });
@@ -377,7 +374,7 @@ adminRouter.put('/trainers/:id', async (req: AuthenticatedRequest, res: Response
     await logAudit(req.user!.id, 'TRAINER_UPDATED', { trainerId: id });
     res.json({ success: true, data: { message: 'Trainer updated.' } });
   } catch (err: any) {
-    res.status(500).json({ success: false, error: { code: 'SERVER_ERROR', message: err.message } });
+    res.status(500).json({ success: false, error: { code: 'SERVER_ERROR', message: 'Failed to update trainer' } });
   }
 });
 
@@ -394,7 +391,7 @@ adminRouter.patch('/trainers/:id/status', async (req: AuthenticatedRequest, res:
     await logAudit(req.user!.id, 'TRAINER_UPDATED', { trainerId: id, status });
     res.json({ success: true, data: { message: `Trainer status changed to ${status}.` } });
   } catch (err: any) {
-    res.status(500).json({ success: false, error: { code: 'SERVER_ERROR', message: err.message } });
+    res.status(500).json({ success: false, error: { code: 'SERVER_ERROR', message: 'Failed to update trainer status' } });
   }
 });
 
@@ -403,7 +400,11 @@ adminRouter.post('/classes', async (req: AuthenticatedRequest, res: Response) =>
   try {
     const { name, description, category, trainerId, date, startTime, endTime, capacity, location } = req.body;
 
-    if (!name || !trainerId || !date || !startTime || !capacity) {
+    const cleanName = sanitizeString(name);
+    const cleanDesc = sanitizeString(description);
+    const cleanLocation = sanitizeString(location);
+
+    if (!cleanName || !trainerId || !date || !startTime || !capacity) {
       res.status(400).json({ success: false, error: { code: 'INVALID_INPUT', message: 'Missing required class details.' } });
       return;
     }
@@ -418,16 +419,16 @@ adminRouter.post('/classes', async (req: AuthenticatedRequest, res: Response) =>
     const classId = 'CLS-' + Math.floor(10000 + Math.random() * 90000);
     const newClass: FitnessClass = {
       id: classId,
-      name: name.trim(),
-      description: description ? description.trim() : '',
-      category: category || 'Strength',
+      name: cleanName,
+      description: cleanDesc,
+      category: (sanitizeString(category) as any) || 'Strength',
       trainerId,
-      date,
-      startTime,
-      endTime: endTime || startTime,
-      capacity: Number(capacity),
+      date: sanitizeString(date),
+      startTime: sanitizeString(startTime),
+      endTime: endTime ? sanitizeString(endTime) : sanitizeString(startTime),
+      capacity: Math.max(1, Number(capacity)),
       bookedCount: 0,
-      location: location || 'Studio A',
+      location: cleanLocation || 'Studio A',
       status: 'scheduled',
       createdAt: new Date().toISOString()
     };
@@ -437,7 +438,7 @@ adminRouter.post('/classes', async (req: AuthenticatedRequest, res: Response) =>
 
     res.status(201).json({ success: true, data: { class: newClass } });
   } catch (err: any) {
-    res.status(500).json({ success: false, error: { code: 'SERVER_ERROR', message: err.message } });
+    res.status(500).json({ success: false, error: { code: 'SERVER_ERROR', message: 'Failed to create class' } });
   }
 });
 
@@ -446,18 +447,22 @@ adminRouter.put('/classes/:id', async (req: AuthenticatedRequest, res: Response)
     const { id } = req.params;
     const { name, description, category, trainerId, date, startTime, endTime, capacity, location, status } = req.body;
 
+    const cleanName = sanitizeString(name);
+    const cleanDesc = sanitizeString(description);
+    const cleanLocation = sanitizeString(location);
+
     await persistenceService.updateData(d => {
       const c = d.classes.find(x => x.id === id);
       if (c) {
-        if (name) c.name = name.trim();
-        if (description !== undefined) c.description = description.trim();
-        if (category) c.category = category;
+        if (cleanName) c.name = cleanName;
+        if (cleanDesc !== undefined) c.description = cleanDesc;
+        if (category) c.category = sanitizeString(category) as any;
         if (trainerId) c.trainerId = trainerId;
-        if (date) c.date = date;
-        if (startTime) c.startTime = startTime;
-        if (endTime) c.endTime = endTime;
+        if (date) c.date = sanitizeString(date);
+        if (startTime) c.startTime = sanitizeString(startTime);
+        if (endTime) c.endTime = sanitizeString(endTime);
         if (capacity !== undefined) c.capacity = Number(capacity);
-        if (location) c.location = location;
+        if (cleanLocation) c.location = cleanLocation;
         if (status) c.status = status;
       }
     });
@@ -465,7 +470,7 @@ adminRouter.put('/classes/:id', async (req: AuthenticatedRequest, res: Response)
     await logAudit(req.user!.id, 'CLASS_UPDATED', { classId: id });
     res.json({ success: true, data: { message: 'Class updated.' } });
   } catch (err: any) {
-    res.status(500).json({ success: false, error: { code: 'SERVER_ERROR', message: err.message } });
+    res.status(500).json({ success: false, error: { code: 'SERVER_ERROR', message: 'Failed to update class' } });
   }
 });
 
@@ -478,7 +483,6 @@ adminRouter.delete('/classes/:id', async (req: AuthenticatedRequest, res: Respon
       if (c) {
         c.status = 'cancelled';
       }
-      // Cancel associated bookings
       d.bookings.forEach(b => {
         if (b.classId === id && b.status === 'confirmed') {
           b.status = 'cancelled';
@@ -490,7 +494,7 @@ adminRouter.delete('/classes/:id', async (req: AuthenticatedRequest, res: Respon
     await logAudit(req.user!.id, 'CLASS_DELETED', { classId: id });
     res.json({ success: true, data: { message: 'Class cancelled.' } });
   } catch (err: any) {
-    res.status(500).json({ success: false, error: { code: 'SERVER_ERROR', message: err.message } });
+    res.status(500).json({ success: false, error: { code: 'SERVER_ERROR', message: 'Failed to cancel class' } });
   }
 });
 
@@ -512,7 +516,7 @@ adminRouter.get('/bookings', async (req: AuthenticatedRequest, res: Response) =>
 
     res.json({ success: true, data: { bookings: enriched } });
   } catch (err: any) {
-    res.status(500).json({ success: false, error: { code: 'SERVER_ERROR', message: err.message } });
+    res.status(500).json({ success: false, error: { code: 'SERVER_ERROR', message: 'Failed to list bookings' } });
   }
 });
 
@@ -534,7 +538,7 @@ adminRouter.get('/attendance', async (req: AuthenticatedRequest, res: Response) 
 
     res.json({ success: true, data: { attendance: enriched } });
   } catch (err: any) {
-    res.status(500).json({ success: false, error: { code: 'SERVER_ERROR', message: err.message } });
+    res.status(500).json({ success: false, error: { code: 'SERVER_ERROR', message: 'Failed to list attendance' } });
   }
 });
 
@@ -547,7 +551,6 @@ adminRouter.post('/attendance', async (req: AuthenticatedRequest, res: Response)
     }
 
     const data = await persistenceService.getData();
-    // Prevent duplicate attendance record for same class & member
     const existing = data.attendance.find(a => a.memberId === memberId && a.classId === classId);
     if (existing) {
       res.status(409).json({ success: false, error: { code: 'DUPLICATE_ATTENDANCE', message: 'Attendance already recorded for this member and class.' } });
@@ -571,7 +574,7 @@ adminRouter.post('/attendance', async (req: AuthenticatedRequest, res: Response)
 
     res.status(201).json({ success: true, data: { attendance: newAtt } });
   } catch (err: any) {
-    res.status(500).json({ success: false, error: { code: 'SERVER_ERROR', message: err.message } });
+    res.status(500).json({ success: false, error: { code: 'SERVER_ERROR', message: 'Failed to record attendance' } });
   }
 });
 
@@ -594,7 +597,7 @@ adminRouter.get('/payments', async (req: AuthenticatedRequest, res: Response) =>
 
     res.json({ success: true, data: { payments: enriched } });
   } catch (err: any) {
-    res.status(500).json({ success: false, error: { code: 'SERVER_ERROR', message: err.message } });
+    res.status(500).json({ success: false, error: { code: 'SERVER_ERROR', message: 'Failed to list payments' } });
   }
 });
 
@@ -613,6 +616,6 @@ adminRouter.get('/audit', async (req: AuthenticatedRequest, res: Response) => {
 
     res.json({ success: true, data: { auditLogs: enriched } });
   } catch (err: any) {
-    res.status(500).json({ success: false, error: { code: 'SERVER_ERROR', message: err.message } });
+    res.status(500).json({ success: false, error: { code: 'SERVER_ERROR', message: 'Failed to fetch audit logs' } });
   }
 });

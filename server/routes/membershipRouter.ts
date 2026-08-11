@@ -2,6 +2,7 @@ import { Router, Response } from 'express';
 import { persistenceService } from '../services/persistenceService.js';
 import { AuthenticatedRequest, requireAuth } from '../services/sessionService.js';
 import { logAudit } from '../services/auditService.js';
+import { sanitizeString } from '../middleware/security.js';
 import { MemberSubscription, Payment } from '../types/index.js';
 
 export const membershipRouter = Router();
@@ -18,7 +19,7 @@ membershipRouter.get('/plans', async (req: AuthenticatedRequest, res: Response) 
   } catch (err: any) {
     res.status(500).json({
       success: false,
-      error: { code: 'SERVER_ERROR', message: err.message }
+      error: { code: 'SERVER_ERROR', message: 'Failed to list membership plans' }
     });
   }
 });
@@ -30,6 +31,7 @@ membershipRouter.use(requireAuth);
 membershipRouter.get('/current', async (req: AuthenticatedRequest, res: Response) => {
   try {
     const data = await persistenceService.getData();
+    // OWASP A01: Identity derived strictly from server-side authenticated session user ID
     const profile = data.memberProfiles.find(p => p.userId === req.user!.id);
     if (!profile) {
       res.json({ success: true, data: { subscription: null } });
@@ -55,7 +57,7 @@ membershipRouter.get('/current', async (req: AuthenticatedRequest, res: Response
   } catch (err: any) {
     res.status(500).json({
       success: false,
-      error: { code: 'SERVER_ERROR', message: err.message }
+      error: { code: 'SERVER_ERROR', message: 'Failed to fetch current membership' }
     });
   }
 });
@@ -67,9 +69,10 @@ membershipRouter.post('/subscribe', async (req: AuthenticatedRequest, res: Respo
     const user = req.user!;
     const data = await persistenceService.getData();
 
+    const cleanMethod = sanitizeString(paymentMethod) || 'simulated_card';
+
     let profile = data.memberProfiles.find(p => p.userId === user.id);
     if (!profile) {
-      // Create profile if missing
       profile = {
         id: 'MEM-' + Math.floor(10000 + Math.random() * 90000),
         userId: user.id,
@@ -115,13 +118,12 @@ membershipRouter.post('/subscribe', async (req: AuthenticatedRequest, res: Respo
       amountPaise: plan.pricePaise,
       currency: 'INR',
       status: 'completed',
-      method: paymentMethod || 'simulated_card',
+      method: cleanMethod,
       description: `${plan.name} Subscription`,
       createdAt: startDate
     };
 
     await persistenceService.updateData(d => {
-      // Cancel previous active subscriptions for this member
       d.memberships.forEach(m => {
         if (m.memberId === profile!.id && m.status === 'active') {
           m.status = 'cancelled';
@@ -152,7 +154,7 @@ membershipRouter.post('/subscribe', async (req: AuthenticatedRequest, res: Respo
   } catch (err: any) {
     res.status(500).json({
       success: false,
-      error: { code: 'SERVER_ERROR', message: err.message || 'Subscription failed' }
+      error: { code: 'SERVER_ERROR', message: 'Subscription failed' }
     });
   }
 });
@@ -164,6 +166,8 @@ membershipRouter.post('/renew', async (req: AuthenticatedRequest, res: Response)
     const user = req.user!;
     const data = await persistenceService.getData();
     const profile = data.memberProfiles.find(p => p.userId === user.id);
+
+    const cleanMethod = sanitizeString(paymentMethod) || 'simulated_card';
 
     if (!profile) {
       res.status(400).json({
@@ -191,7 +195,6 @@ membershipRouter.post('/renew', async (req: AuthenticatedRequest, res: Response)
       return;
     }
 
-    // Extend endDate
     const currentEnd = new Date(currentSub.endDate);
     const newEndObj = new Date(currentEnd > new Date() ? currentEnd : new Date());
     newEndObj.setMonth(newEndObj.getMonth() + plan.durationMonths);
@@ -205,7 +208,7 @@ membershipRouter.post('/renew', async (req: AuthenticatedRequest, res: Response)
       amountPaise: plan.pricePaise,
       currency: 'INR',
       status: 'completed',
-      method: paymentMethod || 'simulated_card',
+      method: cleanMethod,
       description: `${plan.name} Renewal`,
       createdAt: new Date().toISOString()
     };
@@ -239,7 +242,7 @@ membershipRouter.post('/renew', async (req: AuthenticatedRequest, res: Response)
   } catch (err: any) {
     res.status(500).json({
       success: false,
-      error: { code: 'SERVER_ERROR', message: err.message || 'Renewal failed' }
+      error: { code: 'SERVER_ERROR', message: 'Renewal failed' }
     });
   }
 });
@@ -248,6 +251,7 @@ membershipRouter.post('/renew', async (req: AuthenticatedRequest, res: Response)
 membershipRouter.get('/payments', async (req: AuthenticatedRequest, res: Response) => {
   try {
     const data = await persistenceService.getData();
+    // OWASP A01: IDOR protection
     const profile = data.memberProfiles.find(p => p.userId === req.user!.id);
     if (!profile) {
       res.json({ success: true, data: { payments: [] } });
@@ -271,7 +275,7 @@ membershipRouter.get('/payments', async (req: AuthenticatedRequest, res: Respons
   } catch (err: any) {
     res.status(500).json({
       success: false,
-      error: { code: 'SERVER_ERROR', message: err.message }
+      error: { code: 'SERVER_ERROR', message: 'Failed to fetch payments' }
     });
   }
 });
@@ -292,6 +296,7 @@ membershipRouter.get('/payments/:id', async (req: AuthenticatedRequest, res: Res
       return;
     }
 
+    // OWASP A01: IDOR Protection
     if (req.user!.role !== 'admin' && payment.memberId !== profile?.id) {
       res.status(403).json({
         success: false,
@@ -307,7 +312,7 @@ membershipRouter.get('/payments/:id', async (req: AuthenticatedRequest, res: Res
   } catch (err: any) {
     res.status(500).json({
       success: false,
-      error: { code: 'SERVER_ERROR', message: err.message }
+      error: { code: 'SERVER_ERROR', message: 'Failed to fetch payment details' }
     });
   }
 });

@@ -6,7 +6,8 @@ import { useAuth } from '../../context/AuthContext.js';
 import { useToast } from '../../context/ToastContext.js';
 import { MembershipPlan, Payment } from '../../types/index.js';
 import { formatINR, formatDate } from '../../utils/formatters.js';
-import { NeuCard, NeuButton, NeuBadge, NeuProgress, NeuModal, NeuSelect } from '../../components/neumorphic/index.js';
+import { NeuCard, NeuButton, NeuBadge, NeuProgress } from '../../components/neumorphic/index.js';
+import { CheckoutModal } from '../../components/membership/CheckoutModal.js';
 
 export const MembershipPage: React.FC = () => {
   const { subscription, refreshUser } = useAuth();
@@ -19,8 +20,7 @@ export const MembershipPage: React.FC = () => {
 
   // Purchase/Renew Modal State
   const [selectedPlan, setSelectedPlan] = useState<MembershipPlan | null>(null);
-  const [paymentMethod, setPaymentMethod] = useState('simulated_card');
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isRenewal, setIsRenewal] = useState(false);
 
   useEffect(() => {
     async function loadData() {
@@ -37,7 +37,10 @@ export const MembershipPage: React.FC = () => {
         const planParam = searchParams.get('subscribe');
         if (planParam && plansRes.data?.plans) {
           const target = plansRes.data.plans.find((p: any) => p.id === planParam);
-          if (target) setSelectedPlan(target);
+          if (target) {
+            setSelectedPlan(target);
+            setIsRenewal(false);
+          }
         }
       } catch (err) {
         console.error(err);
@@ -48,42 +51,32 @@ export const MembershipPage: React.FC = () => {
     loadData();
   }, [searchParams]);
 
-  const handleSubscribe = async () => {
+  const handleCheckoutSuccess = async (paymentMethod: string) => {
     if (!selectedPlan) return;
-    setIsSubmitting(true);
 
-    const res = await apiClient.subscribeMembership({
-      planId: selectedPlan.id,
-      paymentMethod,
-      autoRenew: false
-    });
-
-    setIsSubmitting(false);
-    if (res.success) {
-      showToast('Membership Activated!', `${selectedPlan.name} is now active on your account.`, 'success');
-      setSelectedPlan(null);
-      await refreshUser();
-      const payRes = await apiClient.getPayments();
-      if (payRes.success) setPayments(payRes.data.payments || []);
+    let res;
+    if (isRenewal) {
+      res = await apiClient.renewMembership({ paymentMethod });
     } else {
-      showToast('Subscription Failed', res.error?.message || 'Transaction failed.', 'error');
+      res = await apiClient.subscribeMembership({
+        planId: selectedPlan.id,
+        paymentMethod,
+        autoRenew: false
+      });
     }
-  };
-
-  const handleRenew = async () => {
-    if (!subscription) return;
-    setIsSubmitting(true);
-
-    const res = await apiClient.renewMembership({ paymentMethod });
-    setIsSubmitting(false);
 
     if (res.success) {
-      showToast('Membership Renewed!', 'Subscription extended successfully.', 'success');
+      showToast(
+        isRenewal ? 'Membership Renewed!' : 'Membership Activated!',
+        `${selectedPlan.name} is now active on your account.`,
+        'success'
+      );
       await refreshUser();
       const payRes = await apiClient.getPayments();
       if (payRes.success) setPayments(payRes.data.payments || []);
     } else {
-      showToast('Renewal Failed', res.error?.message || 'Renewal failed.', 'error');
+      showToast('Checkout Failed', res.error?.message || 'Transaction failed.', 'error');
+      throw new Error('Payment failed');
     }
   };
 
@@ -140,7 +133,16 @@ export const MembershipPage: React.FC = () => {
                 <span className="text-gray-500 block">Auto Renewal</span>
                 <span className="font-bold text-gray-800">{subscription.autoRenew ? 'Enabled' : 'Disabled'}</span>
               </div>
-              <NeuButton variant="primary" size="sm" onClick={handleRenew} disabled={isSubmitting}>
+              <NeuButton
+                variant="primary"
+                size="sm"
+                onClick={() => {
+                  if (subscription?.plan) {
+                    setSelectedPlan(subscription.plan);
+                    setIsRenewal(true);
+                  }
+                }}
+              >
                 <RefreshCw className="w-3.5 h-3.5" /> Renew Now
               </NeuButton>
             </div>
@@ -186,9 +188,12 @@ export const MembershipPage: React.FC = () => {
                 <NeuButton
                   variant={isCurrent ? 'secondary' : 'primary'}
                   className="w-full mt-4"
-                  onClick={() => setSelectedPlan(plan)}
+                  onClick={() => {
+                    setSelectedPlan(plan);
+                    setIsRenewal(false);
+                  }}
                 >
-                  {isCurrent ? 'Switch to Plan' : `Choose ${plan.name}`}
+                  {isCurrent ? 'Current Plan' : `Choose ${plan.name}`}
                 </NeuButton>
               </NeuCard>
             );
@@ -239,53 +244,14 @@ export const MembershipPage: React.FC = () => {
         </NeuCard>
       </div>
 
-      {/* Purchase Review Modal */}
-      <NeuModal
+      {/* Multi-Method Interactive Payment Checkout Modal */}
+      <CheckoutModal
         isOpen={!!selectedPlan}
         onClose={() => setSelectedPlan(null)}
-        title="Review & Confirm Membership"
-      >
-        {selectedPlan && (
-          <div className="space-y-6">
-            <div className="p-4 neu-pressed rounded-2xl space-y-2">
-              <div className="flex justify-between items-center">
-                <span className="text-sm font-bold text-gray-900">{selectedPlan.name} Plan</span>
-                <NeuBadge variant="emerald">{selectedPlan.durationMonths} Months</NeuBadge>
-              </div>
-              <p className="text-xs text-gray-500">{selectedPlan.description}</p>
-              <div className="pt-2 border-t border-gray-300/40 flex justify-between items-center text-sm font-black">
-                <span>Total Due:</span>
-                <span className="text-emerald-600 text-lg">{formatINR(selectedPlan.pricePaise)}</span>
-              </div>
-            </div>
-
-            <NeuSelect
-              label="Simulated Payment Method"
-              value={paymentMethod}
-              onChange={e => setPaymentMethod(e.target.value)}
-              options={[
-                { label: 'Simulated Credit / Debit Card', value: 'simulated_card' },
-                { label: 'Simulated UPI Instant Transfer', value: 'simulated_upi' },
-                { label: 'Demo Sandbox Payment', value: 'demo_payment' }
-              ]}
-            />
-
-            <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-800 flex items-start gap-2">
-              <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
-              <span>Simulated Payment: No real financial transaction will occur. Changes will be persisted to <code>runtime.json</code>.</span>
-            </div>
-
-            <div className="flex justify-end gap-3 pt-2">
-              <NeuButton variant="secondary" onClick={() => setSelectedPlan(null)}>
-                Cancel
-              </NeuButton>
-              <NeuButton variant="primary" onClick={handleSubscribe} disabled={isSubmitting}>
-                {isSubmitting ? 'Processing...' : 'Confirm Simulated Payment'}
-              </NeuButton>
-            </div>
-          </div>
-        )}
-      </NeuModal>
+        plan={selectedPlan}
+        isRenewal={isRenewal}
+        onSuccess={handleCheckoutSuccess}
+      />
     </div>
   );
 };

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { CalendarDays, Filter, Search, UserCheck, Clock, MapPin, CheckCircle2, XCircle } from 'lucide-react';
 import { apiClient } from '../../services/apiClient.js';
 import { useAuth } from '../../context/AuthContext.js';
@@ -11,6 +11,7 @@ import { NeuCard, NeuButton, NeuBadge, NeuInput, NeuSelect, NeuTabs } from '../.
 export const ClassesPage: React.FC = () => {
   const { subscription } = useAuth();
   const { showToast } = useToast();
+  const [searchParams] = useSearchParams();
 
   const [classes, setClasses] = useState<FitnessClass[]>([]);
   const [trainers, setTrainers] = useState<Trainer[]>([]);
@@ -18,9 +19,15 @@ export const ClassesPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
 
   // Filters
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState(searchParams.get('search') || '');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [selectedTrainer, setSelectedTrainer] = useState<string>('all');
+
+  // Update search state if URL query changes
+  useEffect(() => {
+    const q = searchParams.get('search');
+    if (q !== null) setSearch(q);
+  }, [searchParams]);
 
   const categories = ['all', 'Strength', 'Cardio', 'Yoga', 'HIIT', 'Mobility', 'Pilates', 'Functional', 'Recovery'];
 

@@ -1,7 +1,8 @@
 import { Router, Response } from 'express';
 import { persistenceService } from '../services/persistenceService.js';
-import { AuthenticatedRequest, requireAuth, requireRole } from '../services/sessionService.js';
+import { AuthenticatedRequest, requireAuth } from '../services/sessionService.js';
 import { logAudit } from '../services/auditService.js';
+import { sanitizeString, sanitizeUser } from '../middleware/security.js';
 import { Activity } from '../types/index.js';
 
 export const memberRouter = Router();
@@ -13,7 +14,9 @@ memberRouter.use(requireAuth);
 memberRouter.get('/profile', async (req: AuthenticatedRequest, res: Response) => {
   try {
     const data = await persistenceService.getData();
+    // OWASP A01: Identity derived strictly from server-side authenticated session user ID
     const profile = data.memberProfiles.find(p => p.userId === req.user!.id);
+
     if (!profile) {
       res.status(404).json({
         success: false,
@@ -25,23 +28,14 @@ memberRouter.get('/profile', async (req: AuthenticatedRequest, res: Response) =>
     res.json({
       success: true,
       data: {
-        user: {
-          id: req.user!.id,
-          name: req.user!.name,
-          email: req.user!.email,
-          phone: req.user!.phone,
-          role: req.user!.role,
-          status: req.user!.status,
-          createdAt: req.user!.createdAt,
-          lastLoginAt: req.user!.lastLoginAt
-        },
+        user: sanitizeUser(req.user!),
         profile
       }
     });
   } catch (err: any) {
     res.status(500).json({
       success: false,
-      error: { code: 'SERVER_ERROR', message: err.message }
+      error: { code: 'SERVER_ERROR', message: 'Failed to fetch profile' }
     });
   }
 });
@@ -52,12 +46,17 @@ memberRouter.put('/profile', async (req: AuthenticatedRequest, res: Response) =>
     const { name, phone, fitnessGoal, heightCm, dateOfBirth, emergencyContact } = req.body;
     const user = req.user!;
 
+    const cleanName = sanitizeString(name);
+    const cleanPhone = sanitizeString(phone);
+    const cleanGoal = sanitizeString(fitnessGoal);
+    const cleanDob = sanitizeString(dateOfBirth);
+
     await persistenceService.updateData(data => {
       // Update User fields
       const u = data.users.find(x => x.id === user.id);
       if (u) {
-        if (name) u.name = name.trim();
-        if (phone !== undefined) u.phone = phone.trim();
+        if (cleanName) u.name = cleanName;
+        if (cleanPhone !== undefined) u.phone = cleanPhone;
         u.updatedAt = new Date().toISOString();
       }
 
@@ -73,10 +72,15 @@ memberRouter.put('/profile', async (req: AuthenticatedRequest, res: Response) =>
         data.memberProfiles.push(p);
       }
 
-      if (fitnessGoal) p.fitnessGoal = fitnessGoal;
-      if (heightCm !== undefined) p.heightCm = Number(heightCm);
-      if (dateOfBirth !== undefined) p.dateOfBirth = dateOfBirth;
-      if (emergencyContact) p.emergencyContact = emergencyContact;
+      if (cleanGoal) p.fitnessGoal = cleanGoal as any;
+      if (heightCm !== undefined) p.heightCm = Math.min(250, Math.max(50, Number(heightCm) || 175));
+      if (cleanDob) p.dateOfBirth = cleanDob;
+      if (emergencyContact) {
+        p.emergencyContact = {
+          name: sanitizeString(emergencyContact.name),
+          phone: sanitizeString(emergencyContact.phone)
+        };
+      }
       p.updatedAt = new Date().toISOString();
     });
 
@@ -89,14 +93,7 @@ memberRouter.put('/profile', async (req: AuthenticatedRequest, res: Response) =>
     res.json({
       success: true,
       data: {
-        user: {
-          id: updatedUser!.id,
-          name: updatedUser!.name,
-          email: updatedUser!.email,
-          phone: updatedUser!.phone,
-          role: updatedUser!.role,
-          status: updatedUser!.status
-        },
+        user: sanitizeUser(updatedUser!),
         profile: updatedProfile
       }
     });
@@ -137,8 +134,6 @@ memberRouter.get('/dashboard', async (req: AuthenticatedRequest, res: Response) 
       const userBookings = data.bookings.filter(b => b.memberId === memberId && b.status === 'confirmed');
       userBookingsCount = userBookings.length;
 
-      // Find earliest upcoming confirmed class
-      const nowStr = new Date().toISOString();
       const bookedClassIds = userBookings.map(b => b.classId);
       const upcomingClasses = data.classes
         .filter(c => bookedClassIds.includes(c.id) && c.status === 'scheduled')
@@ -154,13 +149,11 @@ memberRouter.get('/dashboard', async (req: AuthenticatedRequest, res: Response) 
       }
     }
 
-    // Member fitness activity stats (past 7 days)
     const memberActivities = memberId ? data.activities.filter(a => a.memberId === memberId) : [];
     const totalDuration = memberActivities.reduce((acc, a) => acc + a.durationMinutes, 0);
     const totalCalories = memberActivities.reduce((acc, a) => acc + a.calories, 0);
     const workoutCount = memberActivities.length;
 
-    // Attendance stats
     const memberAttendance = memberId ? data.attendance.filter(a => a.memberId === memberId) : [];
     const presentCount = memberAttendance.filter(a => a.status === 'present').length;
 
@@ -185,7 +178,7 @@ memberRouter.get('/dashboard', async (req: AuthenticatedRequest, res: Response) 
   } catch (err: any) {
     res.status(500).json({
       success: false,
-      error: { code: 'SERVER_ERROR', message: err.message }
+      error: { code: 'SERVER_ERROR', message: 'Failed to load dashboard' }
     });
   }
 });
@@ -228,7 +221,7 @@ memberRouter.get('/attendance', async (req: AuthenticatedRequest, res: Response)
   } catch (err: any) {
     res.status(500).json({
       success: false,
-      error: { code: 'SERVER_ERROR', message: err.message }
+      error: { code: 'SERVER_ERROR', message: 'Failed to fetch attendance' }
     });
   }
 });
@@ -251,7 +244,7 @@ memberRouter.get('/activity', async (req: AuthenticatedRequest, res: Response) =
   } catch (err: any) {
     res.status(500).json({
       success: false,
-      error: { code: 'SERVER_ERROR', message: err.message }
+      error: { code: 'SERVER_ERROR', message: 'Failed to fetch activity' }
     });
   }
 });
@@ -270,13 +263,16 @@ memberRouter.post('/activity', async (req: AuthenticatedRequest, res: Response) 
       return;
     }
 
+    const cleanType = sanitizeString(type);
+    const cleanDate = sanitizeString(date);
+
     const newActivity: Activity = {
       id: 'ACT-' + Math.floor(10000 + Math.random() * 90000),
       memberId: profile.id,
-      type: type || 'workout',
-      durationMinutes: Number(durationMinutes) || 45,
-      calories: Number(calories) || 300,
-      date: date || new Date().toISOString().split('T')[0],
+      type: (cleanType as any) || 'workout',
+      durationMinutes: Math.min(600, Math.max(1, Number(durationMinutes) || 45)),
+      calories: Math.min(5000, Math.max(0, Number(calories) || 300)),
+      date: cleanDate || new Date().toISOString().split('T')[0],
       source: 'simulated'
     };
 
@@ -321,7 +317,7 @@ memberRouter.get('/stats', async (req: AuthenticatedRequest, res: Response) => {
   } catch (err: any) {
     res.status(500).json({
       success: false,
-      error: { code: 'SERVER_ERROR', message: err.message }
+      error: { code: 'SERVER_ERROR', message: 'Failed to fetch stats' }
     });
   }
 });

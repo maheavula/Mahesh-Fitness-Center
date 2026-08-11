@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Plus, Edit3, XCircle, Calendar, Clock, MapPin, UserCheck, AlertTriangle } from 'lucide-react';
+import { useSearchParams } from 'react-router-dom';
+import { Plus, Edit3, XCircle, Calendar, Clock, MapPin, UserCheck, AlertTriangle, Search } from 'lucide-react';
 import { apiClient } from '../../services/apiClient.js';
 import { useToast } from '../../context/ToastContext.js';
 import { FitnessClass, Trainer } from '../../types/index.js';
@@ -8,9 +9,17 @@ import { NeuCard, NeuButton, NeuBadge, NeuModal, NeuInput, NeuSelect } from '../
 
 export const AdminClassesPage: React.FC = () => {
   const { showToast } = useToast();
+  const [searchParams] = useSearchParams();
+
   const [classes, setClasses] = useState<FitnessClass[]>([]);
   const [trainers, setTrainers] = useState<Trainer[]>([]);
+  const [search, setSearch] = useState(searchParams.get('search') || '');
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const q = searchParams.get('search');
+    if (q !== null) setSearch(q);
+  }, [searchParams]);
 
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -127,6 +136,18 @@ export const AdminClassesPage: React.FC = () => {
     }
   };
 
+  const filteredClasses = classes.filter(cls => {
+    if (!search) return true;
+    const term = search.toLowerCase();
+    return (
+      cls.name.toLowerCase().includes(term) ||
+      cls.description.toLowerCase().includes(term) ||
+      cls.category.toLowerCase().includes(term) ||
+      cls.location.toLowerCase().includes(term) ||
+      cls.trainer?.name.toLowerCase().includes(term)
+    );
+  });
+
   return (
     <div className="space-y-8">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -141,8 +162,24 @@ export const AdminClassesPage: React.FC = () => {
         </NeuButton>
       </div>
 
+      <NeuCard className="p-6">
+        <div className="w-full md:w-80">
+          <NeuInput
+            placeholder="Search class name, category, trainer..."
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            icon={<Search className="w-4 h-4" />}
+          />
+        </div>
+      </NeuCard>
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {classes.map(cls => (
+        {filteredClasses.length === 0 ? (
+          <NeuCard className="col-span-full p-8 text-center text-gray-500 font-semibold">
+            No fitness classes matched your search term.
+          </NeuCard>
+        ) : (
+          filteredClasses.map(cls => (
           <NeuCard key={cls.id} hoverable className="flex flex-col justify-between space-y-6">
             <div className="space-y-4">
               <div className="flex justify-between items-center">
@@ -191,7 +228,7 @@ export const AdminClassesPage: React.FC = () => {
               )}
             </div>
           </NeuCard>
-        ))}
+        )))}
       </div>
 
       {/* Class Modal */}

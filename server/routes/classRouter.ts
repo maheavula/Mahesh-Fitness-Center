@@ -2,6 +2,7 @@ import { Router, Response } from 'express';
 import { persistenceService } from '../services/persistenceService.js';
 import { AuthenticatedRequest, requireAuth } from '../services/sessionService.js';
 import { logAudit } from '../services/auditService.js';
+import { sanitizeString } from '../middleware/security.js';
 import { Booking } from '../types/index.js';
 
 export const classRouter = Router();
@@ -18,7 +19,7 @@ classRouter.get('/trainers', async (req: AuthenticatedRequest, res: Response) =>
   } catch (err: any) {
     res.status(500).json({
       success: false,
-      error: { code: 'SERVER_ERROR', message: err.message }
+      error: { code: 'SERVER_ERROR', message: 'Failed to fetch trainers' }
     });
   }
 });
@@ -41,7 +42,7 @@ classRouter.get('/schedule', async (req: AuthenticatedRequest, res: Response) =>
   } catch (err: any) {
     res.status(500).json({
       success: false,
-      error: { code: 'SERVER_ERROR', message: err.message }
+      error: { code: 'SERVER_ERROR', message: 'Failed to fetch schedule' }
     });
   }
 });
@@ -50,6 +51,7 @@ classRouter.get('/schedule', async (req: AuthenticatedRequest, res: Response) =>
 classRouter.get('/bookings', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const data = await persistenceService.getData();
+    // OWASP A01: Derived strictly from server session user ID
     const profile = data.memberProfiles.find(p => p.userId === req.user!.id);
     if (!profile) {
       res.json({ success: true, data: { bookings: [] } });
@@ -73,7 +75,7 @@ classRouter.get('/bookings', requireAuth, async (req: AuthenticatedRequest, res:
   } catch (err: any) {
     res.status(500).json({
       success: false,
-      error: { code: 'SERVER_ERROR', message: err.message }
+      error: { code: 'SERVER_ERROR', message: 'Failed to fetch member bookings' }
     });
   }
 });
@@ -94,7 +96,7 @@ classRouter.get('/bookings/:id', requireAuth, async (req: AuthenticatedRequest, 
       return;
     }
 
-    // Only owner or admin can view
+    // OWASP A01: IDOR Protection - Only owner or admin can view
     if (req.user!.role !== 'admin' && booking.memberId !== profile?.id) {
       res.status(403).json({
         success: false,
@@ -118,7 +120,7 @@ classRouter.get('/bookings/:id', requireAuth, async (req: AuthenticatedRequest, 
   } catch (err: any) {
     res.status(500).json({
       success: false,
-      error: { code: 'SERVER_ERROR', message: err.message }
+      error: { code: 'SERVER_ERROR', message: 'Failed to fetch booking details' }
     });
   }
 });
@@ -140,6 +142,7 @@ classRouter.delete('/bookings/:id', requireAuth, async (req: AuthenticatedReques
       return;
     }
 
+    // OWASP A01: IDOR Protection
     if (user.role !== 'admin' && booking.memberId !== profile?.id) {
       res.status(403).json({
         success: false,
@@ -163,7 +166,6 @@ classRouter.delete('/bookings/:id', requireAuth, async (req: AuthenticatedReques
         d.bookings[bIndex].cancelledAt = new Date().toISOString();
       }
 
-      // Decrease bookedCount for class
       const cls = d.classes.find(c => c.id === booking.classId);
       if (cls && cls.bookedCount > 0) {
         cls.bookedCount -= 1;
@@ -193,7 +195,8 @@ classRouter.get('/', async (req: AuthenticatedRequest, res: Response) => {
     let list = data.classes;
 
     if (category) {
-      list = list.filter(c => c.category.toLowerCase() === String(category).toLowerCase());
+      const cleanCat = sanitizeString(String(category)).toLowerCase();
+      list = list.filter(c => c.category.toLowerCase() === cleanCat);
     }
 
     if (trainerId) {
@@ -201,15 +204,14 @@ classRouter.get('/', async (req: AuthenticatedRequest, res: Response) => {
     }
 
     if (date) {
-      list = list.filter(c => c.date === String(date));
+      list = list.filter(c => c.date === sanitizeString(String(date)));
     }
 
     if (search) {
-      const term = String(search).toLowerCase();
+      const term = sanitizeString(String(search)).toLowerCase();
       list = list.filter(c => c.name.toLowerCase().includes(term) || c.description.toLowerCase().includes(term));
     }
 
-    // Enrich with trainer data
     const enriched = list.map(c => ({
       ...c,
       trainer: data.trainers.find(t => t.id === c.trainerId)
@@ -222,7 +224,7 @@ classRouter.get('/', async (req: AuthenticatedRequest, res: Response) => {
   } catch (err: any) {
     res.status(500).json({
       success: false,
-      error: { code: 'SERVER_ERROR', message: err.message }
+      error: { code: 'SERVER_ERROR', message: 'Failed to list classes' }
     });
   }
 });
@@ -255,7 +257,7 @@ classRouter.get('/:id', async (req: AuthenticatedRequest, res: Response) => {
   } catch (err: any) {
     res.status(500).json({
       success: false,
-      error: { code: 'SERVER_ERROR', message: err.message }
+      error: { code: 'SERVER_ERROR', message: 'Failed to fetch class details' }
     });
   }
 });
@@ -276,7 +278,7 @@ classRouter.post('/:id/book', requireAuth, async (req: AuthenticatedRequest, res
       return;
     }
 
-    // 1. Verify Active Membership
+    // OWASP A04: Active Membership Check
     const activeSub = data.memberships.find(m => m.memberId === profile.id && m.status === 'active');
     if (!activeSub) {
       res.status(403).json({
@@ -286,7 +288,6 @@ classRouter.post('/:id/book', requireAuth, async (req: AuthenticatedRequest, res
       return;
     }
 
-    // 2. Verify Class exists & scheduled
     const cls = data.classes.find(c => c.id === id);
     if (!cls) {
       res.status(404).json({
@@ -304,7 +305,7 @@ classRouter.post('/:id/book', requireAuth, async (req: AuthenticatedRequest, res
       return;
     }
 
-    // 3. Verify Capacity
+    // OWASP A04: Class Capacity Enforcement
     if (cls.bookedCount >= cls.capacity) {
       res.status(400).json({
         success: false,
@@ -313,7 +314,7 @@ classRouter.post('/:id/book', requireAuth, async (req: AuthenticatedRequest, res
       return;
     }
 
-    // 4. Verify Duplicate Booking
+    // OWASP A04: Duplicate Booking Check
     const existingBooking = data.bookings.find(
       b => b.classId === id && b.memberId === profile.id && b.status === 'confirmed'
     );
@@ -325,7 +326,6 @@ classRouter.post('/:id/book', requireAuth, async (req: AuthenticatedRequest, res
       return;
     }
 
-    // Create Booking
     const bookingId = 'BOOK-' + Math.floor(10000 + Math.random() * 90000);
     const newBooking: Booking = {
       id: bookingId,
@@ -356,7 +356,7 @@ classRouter.post('/:id/book', requireAuth, async (req: AuthenticatedRequest, res
   } catch (err: any) {
     res.status(500).json({
       success: false,
-      error: { code: 'SERVER_ERROR', message: err.message || 'Failed to book class' }
+      error: { code: 'SERVER_ERROR', message: 'Failed to book class' }
     });
   }
 });
