@@ -1,0 +1,93 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --bg-surface: #e8ecf2;
+    --text-main: #2d3748;
+    --accent-green: #10b981;
+    --accent-blue: #3b82f6;
+  }
+
+  body {
+    background-color: var(--bg-surface);
+    color: var(--text-main);
+    font-family: 'Inter', sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Outfit', sans-serif;
+  }
+}
+
+/* Custom Neumorphic Utility Classes */
+.neu-raised {
+  background: #e8ecf2;
+  box-shadow: 7px 7px 15px #c3c7d0, -7px -7px 15px #ffffff;
+}
+
+.neu-raised-hover {
+  background: #e8ecf2;
+  box-shadow: 7px 7px 15px #c3c7d0, -7px -7px 15px #ffffff;
+  transition: all 0.2s ease-in-out;
+}
+
+.neu-raised-hover:hover {
+  box-shadow: 10px 10px 20px #bbbfca, -10px -10px 20px #ffffff;
+  transform: translateY(-2px);
+}
+
+.neu-pressed {
+  background: #e8ecf2;
+  box-shadow: inset 4px 4px 8px #c3c7d0, inset -4px -4px 8px #ffffff;
+}
+
+.neu-pressed-sm {
+  background: #e8ecf2;
+  box-shadow: inset 2px 2px 5px #c3c7d0, inset -2px -2px 5px #ffffff;
+}
+
+.neu-button-active:active {
+  box-shadow: inset 4px 4px 8px #c3c7d0, inset -4px -4px 8px #ffffff;
+  transform: translateY(1px);
+}
+
+.neu-input {
+  background: #e8ecf2;
+  box-shadow: inset 3px 3px 6px #c3c7d0, inset -3px -3px 6px #ffffff;
+  transition: all 0.2s ease;
+}
+
+.neu-input:focus {
+  outline: none;
+  box-shadow: inset 4px 4px 8px #bbbfca, inset -4px -4px 8px #ffffff, 0 0 0 2px rgba(16, 185, 129, 0.4);
+}
+
+.neu-card {
+  background: #e8ecf2;
+  border-radius: 1.5rem;
+  box-shadow: 8px 8px 18px #c3c7d0, -8px -8px 18px #ffffff;
+}
+
+.neu-pill {
+  background: #e8ecf2;
+  border-radius: 9999px;
+  box-shadow: 4px 4px 10px #c3c7d0, -4px -4px 10px #ffffff;
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #e8ecf2;
+}
+::-webkit-scrollbar-thumb {
+  background: #c3c7d0;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #a9adb6;
+}
