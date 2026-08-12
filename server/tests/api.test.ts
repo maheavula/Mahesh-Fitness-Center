@@ -48,4 +48,26 @@ describe('Mahesh Fitness Center Core Logic Tests', () => {
     expect(testClass.capacity).toBeGreaterThan(0);
     expect(testClass.bookedCount).toBeLessThanOrEqual(testClass.capacity);
   });
+
+  it('should handle rapid concurrent writes gracefully without throwing EPERM file lock exceptions', async () => {
+    const data = await persistenceService.getData();
+    const originalCount = data.auditLogs.length;
+
+    // Simulate 10 rapid concurrent write calls from multiple tab switches
+    const writePromises = Array.from({ length: 10 }).map(async (_, idx) => {
+      return persistenceService.updateData(d => {
+        d.auditLogs.push({
+          id: `TEST_CONCURRENT_${idx}_${Date.now()}`,
+          userId: 'USR-TEST',
+          action: 'LOGIN',
+          timestamp: new Date().toISOString()
+        });
+      });
+    });
+
+    await expect(Promise.all(writePromises)).resolves.toBeDefined();
+
+    const finalData = await persistenceService.getData();
+    expect(finalData.auditLogs.length).toBe(originalCount + 10);
+  });
 });

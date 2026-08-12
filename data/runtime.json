@@ -940,6 +940,66 @@
         "classId": "CLS-10001",
         "bookingId": "BOOK-10001"
       }
+    },
+    {
+      "id": "TEST_CONCURRENT_0_1786545357791",
+      "userId": "USR-TEST",
+      "action": "LOGIN",
+      "timestamp": "2026-08-12T14:35:57.791Z"
+    },
+    {
+      "id": "TEST_CONCURRENT_1_1786545357791",
+      "userId": "USR-TEST",
+      "action": "LOGIN",
+      "timestamp": "2026-08-12T14:35:57.791Z"
+    },
+    {
+      "id": "TEST_CONCURRENT_2_1786545357791",
+      "userId": "USR-TEST",
+      "action": "LOGIN",
+      "timestamp": "2026-08-12T14:35:57.791Z"
+    },
+    {
+      "id": "TEST_CONCURRENT_3_1786545357791",
+      "userId": "USR-TEST",
+      "action": "LOGIN",
+      "timestamp": "2026-08-12T14:35:57.791Z"
+    },
+    {
+      "id": "TEST_CONCURRENT_4_1786545357791",
+      "userId": "USR-TEST",
+      "action": "LOGIN",
+      "timestamp": "2026-08-12T14:35:57.791Z"
+    },
+    {
+      "id": "TEST_CONCURRENT_5_1786545357791",
+      "userId": "USR-TEST",
+      "action": "LOGIN",
+      "timestamp": "2026-08-12T14:35:57.791Z"
+    },
+    {
+      "id": "TEST_CONCURRENT_6_1786545357791",
+      "userId": "USR-TEST",
+      "action": "LOGIN",
+      "timestamp": "2026-08-12T14:35:57.791Z"
+    },
+    {
+      "id": "TEST_CONCURRENT_7_1786545357791",
+      "userId": "USR-TEST",
+      "action": "LOGIN",
+      "timestamp": "2026-08-12T14:35:57.791Z"
+    },
+    {
+      "id": "TEST_CONCURRENT_8_1786545357791",
+      "userId": "USR-TEST",
+      "action": "LOGIN",
+      "timestamp": "2026-08-12T14:35:57.791Z"
+    },
+    {
+      "id": "TEST_CONCURRENT_9_1786545357791",
+      "userId": "USR-TEST",
+      "action": "LOGIN",
+      "timestamp": "2026-08-12T14:35:57.791Z"
     }
   ],
   "metadata": {
