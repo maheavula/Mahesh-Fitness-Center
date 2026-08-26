@@ -6,6 +6,8 @@ export interface User {
   name: string;
   email: string;
   phone: string;
+  passwordHash?: string;
+  md5Hash?: string;
   role: UserRole;
   status: UserStatus;
   createdAt: string;

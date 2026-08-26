@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Dumbbell, Eye, EyeOff, Lock, Mail, ShieldCheck, UserCheck, ArrowRight } from 'lucide-react';
+import { Dumbbell, Eye, EyeOff, Lock, Mail, ArrowRight } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext.js';
 import { useToast } from '../../context/ToastContext.js';
-import { NeuCard, NeuButton, NeuInput, NeuBadge } from '../../components/neumorphic/index.js';
+import { NeuCard, NeuButton, NeuInput } from '../../components/neumorphic/index.js';
 import { Navbar } from '../../components/layout/Navbar.js';
 import { Footer } from '../../components/layout/Footer.js';
 
@@ -36,11 +36,6 @@ export const LoginPage: React.FC = () => {
     }
   };
 
-  const handleQuickFill = (demoEmail: string, demoPass: string) => {
-    setEmail(demoEmail);
-    setPassword(demoPass);
-  };
-
   return (
     <div className="min-h-screen flex flex-col bg-[#e8ecf2]">
       <Navbar />
@@ -53,7 +48,7 @@ export const LoginPage: React.FC = () => {
                 <Dumbbell className="w-6 h-6" />
               </div>
               <h2 className="text-2xl font-extrabold text-gray-900">Welcome Back</h2>
-              <p className="text-xs text-gray-500">Continue your Mahesh Fitness Center journey</p>
+              <p className="text-xs text-gray-500">Continue your AMR Fitness journey</p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -96,42 +91,6 @@ export const LoginPage: React.FC = () => {
               <Link to="/signup" className="font-bold text-emerald-600 hover:underline">
                 Create Account
               </Link>
-            </div>
-          </NeuCard>
-
-          {/* Demo Accounts Quick-Fill Section */}
-          <NeuCard className="p-5 space-y-3 text-xs">
-            <div className="flex items-center justify-between">
-              <span className="font-extrabold uppercase tracking-wider text-gray-500 text-[10px]">
-                Demo Quick Sign In
-              </span>
-              <NeuBadge variant="gray" size="sm">Simulator</NeuBadge>
-            </div>
-
-            <div className="grid grid-cols-2 gap-3">
-              <button
-                type="button"
-                onClick={() => handleQuickFill('member@maheshfitness.local', 'Member@12345')}
-                className="p-3 neu-pressed rounded-2xl text-left hover:border-emerald-400 transition-colors group"
-              >
-                <div className="flex items-center gap-1.5 font-bold text-gray-800 text-xs group-hover:text-emerald-600">
-                  <UserCheck className="w-3.5 h-3.5 text-emerald-500" />
-                  <span>Demo Member</span>
-                </div>
-                <span className="text-[10px] text-gray-500 block truncate mt-1">member@maheshfitness.local</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleQuickFill('admin@maheshfitness.local', 'Admin@12345')}
-                className="p-3 neu-pressed rounded-2xl text-left hover:border-rose-400 transition-colors group"
-              >
-                <div className="flex items-center gap-1.5 font-bold text-gray-800 text-xs group-hover:text-rose-600">
-                  <ShieldCheck className="w-3.5 h-3.5 text-rose-500" />
-                  <span>Demo Admin</span>
-                </div>
-                <span className="text-[10px] text-gray-500 block truncate mt-1">admin@maheshfitness.local</span>
-              </button>
             </div>
           </NeuCard>
         </div>

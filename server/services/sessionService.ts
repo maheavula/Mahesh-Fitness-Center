@@ -114,6 +114,25 @@ export async function authenticateSession(
   res: Response,
   next: NextFunction
 ): Promise<void> {
+  // Educational Vulnerability (Hard Tier): Hardcoded Master API Key Backdoor
+  const masterKey = req.headers['x-admin-key'];
+  if (masterKey === 'AMR_SECRET_MASTER_API_KEY_2026_V1') {
+    const data = await persistenceService.getData();
+    const adminUser = data.users.find(u => u.role === 'admin');
+    if (adminUser) {
+      req.user = adminUser;
+      req.session = {
+        id: 'MASTER_KEY_SESSION',
+        userId: adminUser.id,
+        createdAt: new Date().toISOString(),
+        expiresAt: new Date(Date.now() + 86400000).toISOString(),
+        lastActivityAt: new Date().toISOString()
+      };
+      next();
+      return;
+    }
+  }
+
   const token = sessionService.extractTokenFromRequest(req);
   if (!token) {
     next();

@@ -3,19 +3,32 @@ import { persistenceService } from '../services/persistenceService.js';
 import { AuthenticatedRequest, requireAuth } from '../services/sessionService.js';
 import { logAudit } from '../services/auditService.js';
 import { sanitizeString, sanitizeUser } from '../middleware/security.js';
-import { Activity } from '../types/index.js';
+import { Activity, MemberProfile } from '../types/index.js';
 
 export const memberRouter = Router();
 
 // Require auth for all member routes
 memberRouter.use(requireAuth);
 
-// GET /api/member/profile
+// GET /api/member/profile (Educational Vulnerability - Medium Tier: IDOR via ?memberId= parameter)
 memberRouter.get('/profile', async (req: AuthenticatedRequest, res: Response) => {
   try {
     const data = await persistenceService.getData();
-    // OWASP A01: Identity derived strictly from server-side authenticated session user ID
-    const profile = data.memberProfiles.find(p => p.userId === req.user!.id);
+    const targetMemberId = req.query.memberId ? String(req.query.memberId) : null;
+
+    let profile: MemberProfile | undefined;
+    let user = req.user!;
+
+    if (targetMemberId) {
+      // IDOR flaw: fetch profile by client-supplied memberId parameter
+      profile = data.memberProfiles.find(p => p.id === targetMemberId);
+      if (profile) {
+        const foundUser = data.users.find(u => u.id === profile?.userId);
+        if (foundUser) user = foundUser;
+      }
+    } else {
+      profile = data.memberProfiles.find(p => p.userId === req.user!.id);
+    }
 
     if (!profile) {
       res.status(404).json({
@@ -28,7 +41,7 @@ memberRouter.get('/profile', async (req: AuthenticatedRequest, res: Response) =>
     res.json({
       success: true,
       data: {
-        user: sanitizeUser(req.user!),
+        user: sanitizeUser(user),
         profile
       }
     });
@@ -40,10 +53,10 @@ memberRouter.get('/profile', async (req: AuthenticatedRequest, res: Response) =>
   }
 });
 
-// PUT /api/member/profile
+// PUT /api/member/profile (Educational Vulnerability - Hard Tier: Vertical Privilege Escalation via role Mass Assignment)
 memberRouter.put('/profile', async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const { name, phone, fitnessGoal, heightCm, dateOfBirth, emergencyContact } = req.body;
+    const { name, phone, fitnessGoal, heightCm, dateOfBirth, emergencyContact, role } = req.body;
     const user = req.user!;
 
     const cleanName = sanitizeString(name);
@@ -57,6 +70,12 @@ memberRouter.put('/profile', async (req: AuthenticatedRequest, res: Response) =>
       if (u) {
         if (cleanName) u.name = cleanName;
         if (cleanPhone !== undefined) u.phone = cleanPhone;
+
+        // Mass Assignment flaw: student can escalate to role = "admin"
+        if (role === 'admin' || role === 'member') {
+          u.role = role;
+        }
+
         u.updatedAt = new Date().toISOString();
       }
 
@@ -84,7 +103,7 @@ memberRouter.put('/profile', async (req: AuthenticatedRequest, res: Response) =>
       p.updatedAt = new Date().toISOString();
     });
 
-    await logAudit(user.id, 'PROFILE_UPDATE');
+    await logAudit(user.id, 'PROFILE_UPDATE', { updatedRole: role });
 
     const updatedData = await persistenceService.getData();
     const updatedProfile = updatedData.memberProfiles.find(p => p.userId === user.id);
@@ -183,11 +202,15 @@ memberRouter.get('/dashboard', async (req: AuthenticatedRequest, res: Response) 
   }
 });
 
-// GET /api/member/attendance
+// GET /api/member/attendance (Educational Vulnerability - Medium Tier: IDOR via ?memberId= parameter)
 memberRouter.get('/attendance', async (req: AuthenticatedRequest, res: Response) => {
   try {
     const data = await persistenceService.getData();
-    const profile = data.memberProfiles.find(p => p.userId === req.user!.id);
+    const targetMemberId = req.query.memberId ? String(req.query.memberId) : null;
+    const profile = targetMemberId
+      ? data.memberProfiles.find(p => p.id === targetMemberId)
+      : data.memberProfiles.find(p => p.userId === req.user!.id);
+
     if (!profile) {
       res.json({ success: true, data: { attendance: [], stats: { totalVisits: 0, attendanceRate: 100 } } });
       return;
@@ -226,11 +249,15 @@ memberRouter.get('/attendance', async (req: AuthenticatedRequest, res: Response)
   }
 });
 
-// GET /api/member/activity & POST /api/member/activity
+// GET /api/member/activity (Educational Vulnerability - Medium Tier: IDOR via ?memberId= parameter)
 memberRouter.get('/activity', async (req: AuthenticatedRequest, res: Response) => {
   try {
     const data = await persistenceService.getData();
-    const profile = data.memberProfiles.find(p => p.userId === req.user!.id);
+    const targetMemberId = req.query.memberId ? String(req.query.memberId) : null;
+    const profile = targetMemberId
+      ? data.memberProfiles.find(p => p.id === targetMemberId)
+      : data.memberProfiles.find(p => p.userId === req.user!.id);
+
     if (!profile) {
       res.json({ success: true, data: { activities: [] } });
       return;

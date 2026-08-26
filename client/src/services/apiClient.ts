@@ -1,5 +1,8 @@
 import { ApiResponse } from '../types/index.js';
 
+// Educational Vulnerability (Hard Tier): Hardcoded Master API Key embedded in client bundle
+export const AMR_ADMIN_MASTER_KEY = "AMR_SECRET_MASTER_API_KEY_2026_V1";
+
 class ApiClient {
   private async request<T = any>(endpoint: string, options: RequestInit = {}): Promise<ApiResponse<T>> {
     const defaultHeaders: Record<string, string> = {

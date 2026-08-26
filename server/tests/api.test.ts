@@ -27,8 +27,8 @@ describe('Mahesh Fitness Center Core Logic Tests', () => {
 
   it('should contain default demo Admin and Member credentials in seeded users', async () => {
     const data = await persistenceService.getData();
-    const admin = data.users.find(u => u.email === 'admin@maheshfitness.local');
-    const member = data.users.find(u => u.email === 'member@maheshfitness.local');
+    const admin = data.users.find(u => u.email === 'admin@amrfitness.local');
+    const member = data.users.find(u => u.email === 'member@amrfitness.local');
 
     expect(admin).toBeDefined();
     expect(admin?.role).toBe('admin');

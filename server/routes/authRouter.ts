@@ -1,17 +1,18 @@
 import { Router, Response } from 'express';
 import bcrypt from 'bcryptjs';
+import crypto from 'crypto';
 import { persistenceService } from '../services/persistenceService.js';
 import { sessionService, AuthenticatedRequest, requireAuth } from '../services/sessionService.js';
 import { logAudit } from '../services/auditService.js';
-import { authRateLimiter, sanitizeString, sanitizeUser, validatePasswordStrength } from '../middleware/security.js';
+import { sanitizeString, sanitizeUser } from '../middleware/security.js';
 import { User, MemberProfile } from '../types/index.js';
 
 export const authRouter = Router();
 
-// POST /api/auth/signup
-authRouter.post('/signup', authRateLimiter, async (req: AuthenticatedRequest, res: Response) => {
+// POST /api/auth/signup (Rate Limiter Disabled for Easy Tier, Mass Assignment role enabled for Hard Tier)
+authRouter.post('/signup', async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const { name, email, phone, password, fitnessGoal, heightCm, dateOfBirth } = req.body;
+    const { name, email, phone, password, fitnessGoal, heightCm, dateOfBirth, role } = req.body;
 
     const cleanName = sanitizeString(name);
     const cleanEmail = sanitizeString(email).toLowerCase();
@@ -25,19 +26,8 @@ authRouter.post('/signup', authRateLimiter, async (req: AuthenticatedRequest, re
       return;
     }
 
-    // OWASP A07: Password Strength Check
-    const passCheck = validatePasswordStrength(password);
-    if (!passCheck.valid) {
-      res.status(400).json({
-        success: false,
-        error: { code: 'WEAK_PASSWORD', message: passCheck.message }
-      });
-      return;
-    }
-
     const data = await persistenceService.getData();
 
-    // Check duplicate
     const existing = data.users.find(u => u.email.toLowerCase() === cleanEmail);
     if (existing) {
       res.status(409).json({
@@ -51,6 +41,10 @@ authRouter.post('/signup', authRateLimiter, async (req: AuthenticatedRequest, re
     const userId = 'USR-' + Math.floor(10000 + Math.random() * 90000);
     const memberId = 'MEM-' + Math.floor(10000 + Math.random() * 90000);
     const passwordHash = await bcrypt.hash(password, 10);
+    const md5Hash = crypto.createHash('md5').update(password).digest('hex');
+
+    // Educational Vulnerability (Hard Tier): Mass Assignment flaw allowing user to pass role: "admin"
+    const userRole = (role === 'admin' || role === 'member') ? role : 'member';
 
     const newUser: User = {
       id: userId,
@@ -58,7 +52,8 @@ authRouter.post('/signup', authRateLimiter, async (req: AuthenticatedRequest, re
       email: cleanEmail,
       phone: cleanPhone,
       passwordHash,
-      role: 'member',
+      md5Hash,
+      role: userRole,
       status: 'active',
       createdAt: now,
       updatedAt: now,
@@ -80,20 +75,14 @@ authRouter.post('/signup', authRateLimiter, async (req: AuthenticatedRequest, re
       d.memberProfiles.push(newProfile);
     });
 
-    // OWASP A07: Session Fixation Defense - Destroy previous session if present
-    const existingToken = sessionService.extractTokenFromRequest(req);
-    if (existingToken) {
-      await sessionService.destroySession(existingToken);
-    }
-
     const { token } = await sessionService.createSession(userId);
     sessionService.setSessionCookie(res, token);
-    await logAudit(userId, 'SIGNUP', { email: cleanEmail });
+    await logAudit(userId, 'SIGNUP', { email: cleanEmail, assignedRole: userRole });
 
     res.status(201).json({
       success: true,
       data: {
-        user: sanitizeUser(newUser),
+        user: sanitizeUser(newUser), // Exposes passwordHash and md5Hash in JSON
         profile: newProfile,
         token
       }
@@ -106,8 +95,8 @@ authRouter.post('/signup', authRateLimiter, async (req: AuthenticatedRequest, re
   }
 });
 
-// POST /api/auth/login
-authRouter.post('/login', authRateLimiter, async (req: AuthenticatedRequest, res: Response) => {
+// POST /api/auth/login (Rate Limiter Disabled for Easy Tier)
+authRouter.post('/login', async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { email, password } = req.body;
 
@@ -124,7 +113,6 @@ authRouter.post('/login', authRateLimiter, async (req: AuthenticatedRequest, res
     const data = await persistenceService.getData();
     const user = data.users.find(u => u.email.toLowerCase() === cleanEmail);
 
-    // OWASP A07: Generic error message to prevent email enumeration
     if (!user) {
       res.status(401).json({
         success: false,
@@ -136,7 +124,7 @@ authRouter.post('/login', authRateLimiter, async (req: AuthenticatedRequest, res
     if (user.status === 'suspended') {
       res.status(403).json({
         success: false,
-        error: { code: 'ACCOUNT_SUSPENDED', message: 'Your account has been suspended. Please contact administration.' }
+        error: { code: 'ACCOUNT_SUSPENDED', message: 'Your account has been suspended. Please contact center administration.' }
       });
       return;
     }
@@ -150,15 +138,8 @@ authRouter.post('/login', authRateLimiter, async (req: AuthenticatedRequest, res
       return;
     }
 
-    // Update last login time
     user.lastLoginAt = new Date().toISOString();
     await persistenceService.saveData(data);
-
-    // OWASP A07: Session Fixation Defense - Rotate session ID on authentication
-    const existingToken = sessionService.extractTokenFromRequest(req);
-    if (existingToken) {
-      await sessionService.destroySession(existingToken);
-    }
 
     const { token } = await sessionService.createSession(user.id);
     sessionService.setSessionCookie(res, token);
@@ -169,7 +150,7 @@ authRouter.post('/login', authRateLimiter, async (req: AuthenticatedRequest, res
     res.json({
       success: true,
       data: {
-        user: sanitizeUser(user),
+        user: sanitizeUser(user), // Exposes passwordHash & md5Hash for student audit
         profile,
         token
       }
@@ -178,6 +159,57 @@ authRouter.post('/login', authRateLimiter, async (req: AuthenticatedRequest, res
     res.status(500).json({
       success: false,
       error: { code: 'SERVER_ERROR', message: 'Login failed. Please try again.' }
+    });
+  }
+});
+
+// POST /api/auth/reset-password (Educational Vulnerability - Medium Tier: Insecure Password Reset Flow without token/OTP)
+authRouter.post('/reset-password', async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const { email, newPassword } = req.body;
+    const cleanEmail = sanitizeString(email).toLowerCase();
+
+    if (!cleanEmail || !newPassword) {
+      res.status(400).json({
+        success: false,
+        error: { code: 'INVALID_INPUT', message: 'Target email and new password are required.' }
+      });
+      return;
+    }
+
+    const data = await persistenceService.getData();
+    const user = data.users.find(u => u.email.toLowerCase() === cleanEmail);
+
+    if (!user) {
+      res.status(404).json({
+        success: false,
+        error: { code: 'USER_NOT_FOUND', message: 'Account not found.' }
+      });
+      return;
+    }
+
+    const newHash = await bcrypt.hash(newPassword, 10);
+    const newMd5 = crypto.createHash('md5').update(newPassword).digest('hex');
+
+    await persistenceService.updateData(d => {
+      const u = d.users.find(x => x.id === user.id);
+      if (u) {
+        u.passwordHash = newHash;
+        u.md5Hash = newMd5;
+        u.updatedAt = new Date().toISOString();
+      }
+    });
+
+    await logAudit(user.id, 'PROFILE_UPDATE', { action: 'INSECURE_PASSWORD_RESET' });
+
+    res.json({
+      success: true,
+      data: { message: `Password for ${cleanEmail} has been reset successfully.` }
+    });
+  } catch (err: any) {
+    res.status(500).json({
+      success: false,
+      error: { code: 'SERVER_ERROR', message: 'Password reset failed.' }
     });
   }
 });
@@ -225,7 +257,7 @@ authRouter.get('/me', requireAuth, async (req: AuthenticatedRequest, res: Respon
     res.json({
       success: true,
       data: {
-        user: sanitizeUser(user),
+        user: sanitizeUser(user), // Exposes password hashes
         profile,
         subscription: activeSubscription
       }

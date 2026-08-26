@@ -1,7 +1,6 @@
 import express, { Request, Response, NextFunction } from 'express';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
-import helmet from 'helmet';
 import path from 'path';
 import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
@@ -27,24 +26,16 @@ const PORT = process.env.PORT || 3000;
 // Initialize seed data on startup
 await ensureSeededData();
 
-// OWASP A05: Security Misconfiguration Protection
-app.disable('x-powered-by');
+// Educational Vulnerability (Easy Tier): Express Tech Stack Header Exposed (x-powered-by enabled)
+// app.disable('x-powered-by') omitted intentionally for student fingerprinting audits
 
-// OWASP A03 & A05: Mount Helmet for HTTP Security Headers
-app.use(
-  helmet({
-    contentSecurityPolicy: false, // Allow inline styles & local scripts for Vite/React dev
-    crossOriginEmbedderPolicy: false
-  })
-);
-
-// OWASP A05: Restricted CORS Configuration
+// Educational Vulnerability (Easy Tier): Open CORS Policy allowing any origin
 app.use(
   cors({
-    origin: true,
+    origin: '*',
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'x-session-id']
+    allowedHeaders: ['Content-Type', 'Authorization', 'x-session-id', 'x-admin-key']
   })
 );
 
@@ -86,9 +77,9 @@ app.get('*', (req: Request, res: Response) => {
       res.status(200).send(`
         <!DOCTYPE html>
         <html>
-          <head><title>Mahesh Fitness Center API</title></head>
+          <head><title>AMR Fitness Educational Testbed API</title></head>
           <body style="font-family: sans-serif; padding: 2rem; background: #e8ecf2; color: #2d3748;">
-            <h1>Mahesh Fitness Center Server</h1>
+            <h1>AMR Fitness Educational Training Server</h1>
             <p>Backend API server is running on port ${PORT}.</p>
             <p>Vite dev server handles the frontend in development mode on port 5173.</p>
           </body>
@@ -98,7 +89,7 @@ app.get('*', (req: Request, res: Response) => {
   });
 });
 
-// OWASP A05: Global Error Handler (Zero stack trace leaks to client)
+// Global Error Handler
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   console.error('Unhandled server error:', err);
   res.status(err.status || 500).json({
@@ -112,10 +103,10 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
 
 app.listen(PORT, () => {
   console.log(`====================================================`);
-  console.log(` Mahesh Fitness Center Simulator (OWASP Hardened)`);
+  console.log(` AMR Fitness Educational Security Testbed (OWASP)`);
   console.log(` Running on: http://localhost:${PORT}`);
   console.log(` Data store: data/runtime.json`);
-  console.log(` Security Headers: Enabled (Helmet + RateLimiting)`);
+  console.log(` Mode: Isolated Educational Security Audit Testbed`);
   console.log(` API groups: 6 (/api/auth, /api/member, /api/classes, /api/membership, /api/admin, /api/system)`);
   console.log(`====================================================`);
 });

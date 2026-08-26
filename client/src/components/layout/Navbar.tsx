@@ -105,7 +105,7 @@ export const Navbar: React.FC = () => {
           </div>
           <div>
             <span className="text-lg font-black tracking-tight text-gray-900 block leading-tight">
-              Mahesh Fitness
+              AMR Fitness
             </span>
             <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-600 block">
               Center

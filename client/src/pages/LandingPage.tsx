@@ -52,7 +52,7 @@ export const LandingPage: React.FC = () => {
               Live Healthier.
             </h1>
             <p className="text-base lg:text-lg text-gray-600 max-w-xl leading-relaxed">
-              Welcome to Mahesh Fitness Center. A premium digital fitness club combining elite strength equipment, expert personal trainers, and seamless group class bookings.
+              Welcome to AMR Fitness. A premium educational security training testbed combining strength equipment, expert personal trainers, and class bookings.
             </p>
             <div className="flex flex-wrap items-center gap-4 pt-4">
               <Link to="/signup">
@@ -86,13 +86,13 @@ export const LandingPage: React.FC = () => {
           <div className="lg:col-span-5 relative">
             <NeuCard className="p-8 relative z-10 space-y-6">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-extrabold text-emerald-600 uppercase tracking-widest">Mahesh Fitness Club</span>
-                <NeuBadge variant="emerald">Live Gym Simulator</NeuBadge>
+                <span className="text-xs font-extrabold text-emerald-600 uppercase tracking-widest">AMR Fitness Club</span>
+                <NeuBadge variant="emerald">Educational Testbed</NeuBadge>
               </div>
               <div className="w-full h-48 rounded-2xl overflow-hidden relative">
                 <img
                   src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=800&q=80"
-                  alt="Mahesh Fitness Gym Floor"
+                  alt="AMR Fitness Gym Floor"
                   className="w-full h-full object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-gray-950/70 via-transparent to-transparent flex items-end p-4">
@@ -227,7 +227,7 @@ export const LandingPage: React.FC = () => {
       <section className="py-16 px-4 lg:px-8 max-w-7xl mx-auto w-full">
         <NeuCard className="p-8 lg:p-12">
           <div className="text-center max-w-2xl mx-auto space-y-3 mb-12">
-            <h2 className="text-3xl font-extrabold text-gray-900">Why Mahesh Fitness Center?</h2>
+            <h2 className="text-3xl font-extrabold text-gray-900">Why AMR Fitness?</h2>
             <p className="text-sm text-gray-600">Built to empower your lifestyle with modern technology and physical excellence.</p>
           </div>
 

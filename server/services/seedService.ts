@@ -18,25 +18,30 @@ import {
 export async function ensureSeededData(): Promise<void> {
   const data = await persistenceService.getData();
 
-  // If already seeded with users, return
-  if (data.users.length > 0) {
+  // If already seeded with AMR Fitness admin, return
+  const hasAmrAdmin = data.users.some(u => u.email === 'admin@amrfitness.local');
+  if (hasAmrAdmin) {
     return;
   }
 
-  console.log('Seeding initial Mahesh Fitness Center demo data into runtime.json...');
+  console.log('Seeding initial AMR Fitness Center educational training data into runtime.json...');
 
   const now = new Date().toISOString();
   const adminPasswordHash = await bcrypt.hash('Admin@12345', 10);
   const memberPasswordHash = await bcrypt.hash('Member@12345', 10);
   const defaultUserPasswordHash = await bcrypt.hash('Fitness@123', 10);
 
+  // MD5 hashes for educational cracking exercises (e10adc3949ba59abbe56e057f20f883e = "123456")
+  const md5DemoHash = 'e10adc3949ba59abbe56e057f20f883e';
+
   // 1. Users & Profiles
   const adminUser: User = {
     id: 'USR-10000',
-    name: 'Mahesh Center Administrator',
-    email: 'admin@maheshfitness.local',
+    name: 'AMR Fitness Lead Administrator',
+    email: 'admin@amrfitness.local',
     phone: '+919876543210',
     passwordHash: adminPasswordHash,
+    md5Hash: md5DemoHash,
     role: 'admin',
     status: 'active',
     createdAt: now,
@@ -46,10 +51,11 @@ export async function ensureSeededData(): Promise<void> {
 
   const demoMemberUser: User = {
     id: 'USR-10001',
-    name: 'Mahesh Kumar',
-    email: 'member@maheshfitness.local',
+    name: 'AMR Student Member',
+    email: 'member@amrfitness.local',
     phone: '+919123456789',
     passwordHash: memberPasswordHash,
+    md5Hash: md5DemoHash,
     role: 'member',
     status: 'active',
     createdAt: '2026-01-15T08:00:00.000Z',

@@ -31,7 +31,6 @@ membershipRouter.use(requireAuth);
 membershipRouter.get('/current', async (req: AuthenticatedRequest, res: Response) => {
   try {
     const data = await persistenceService.getData();
-    // OWASP A01: Identity derived strictly from server-side authenticated session user ID
     const profile = data.memberProfiles.find(p => p.userId === req.user!.id);
     if (!profile) {
       res.json({ success: true, data: { subscription: null } });
@@ -62,10 +61,10 @@ membershipRouter.get('/current', async (req: AuthenticatedRequest, res: Response
   }
 });
 
-// POST /api/membership/subscribe - Activate simulated membership
+// POST /api/membership/subscribe (Educational Vulnerability - Hard Tier: Business Logic Flaw / Client-supplied Price & Status Bypass)
 membershipRouter.post('/subscribe', async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const { planId, paymentMethod, autoRenew } = req.body;
+    const { planId, paymentMethod, autoRenew, pricePaise: clientPricePaise, status: clientStatus } = req.body;
     const user = req.user!;
     const data = await persistenceService.getData();
 
@@ -91,6 +90,12 @@ membershipRouter.post('/subscribe', async (req: AuthenticatedRequest, res: Respo
       return;
     }
 
+    // Business Logic Flaw: Honor client-supplied price or status override without server-side validation
+    const chargedPricePaise = clientPricePaise !== undefined ? Number(clientPricePaise) : plan.pricePaise;
+    const subscriptionStatus = (clientStatus === 'active' || clientStatus === 'expired' || clientStatus === 'cancelled')
+      ? clientStatus
+      : 'active';
+
     const now = new Date();
     const startDate = now.toISOString();
     const endDateObj = new Date(now);
@@ -104,7 +109,7 @@ membershipRouter.post('/subscribe', async (req: AuthenticatedRequest, res: Respo
       id: subId,
       memberId: profile.id,
       planId: plan.id,
-      status: 'active',
+      status: subscriptionStatus,
       startDate,
       endDate,
       autoRenew: !!autoRenew,
@@ -115,11 +120,11 @@ membershipRouter.post('/subscribe', async (req: AuthenticatedRequest, res: Respo
       id: payId,
       memberId: profile.id,
       membershipId: subId,
-      amountPaise: plan.pricePaise,
+      amountPaise: chargedPricePaise,
       currency: 'INR',
       status: 'completed',
       method: cleanMethod,
-      description: `${plan.name} Subscription`,
+      description: `${plan.name} Subscription (Charged: ₹${chargedPricePaise / 100})`,
       createdAt: startDate
     };
 
@@ -137,7 +142,7 @@ membershipRouter.post('/subscribe', async (req: AuthenticatedRequest, res: Respo
       planId: plan.id,
       subscriptionId: subId,
       paymentId: payId,
-      amountPaise: plan.pricePaise
+      amountPaise: chargedPricePaise
     });
 
     res.status(201).json({
@@ -251,7 +256,6 @@ membershipRouter.post('/renew', async (req: AuthenticatedRequest, res: Response)
 membershipRouter.get('/payments', async (req: AuthenticatedRequest, res: Response) => {
   try {
     const data = await persistenceService.getData();
-    // OWASP A01: IDOR protection
     const profile = data.memberProfiles.find(p => p.userId === req.user!.id);
     if (!profile) {
       res.json({ success: true, data: { payments: [] } });
@@ -292,15 +296,6 @@ membershipRouter.get('/payments/:id', async (req: AuthenticatedRequest, res: Res
       res.status(404).json({
         success: false,
         error: { code: 'PAYMENT_NOT_FOUND', message: 'Payment record not found.' }
-      });
-      return;
-    }
-
-    // OWASP A01: IDOR Protection
-    if (req.user!.role !== 'admin' && payment.memberId !== profile?.id) {
-      res.status(403).json({
-        success: false,
-        error: { code: 'FORBIDDEN', message: 'Access denied.' }
       });
       return;
     }

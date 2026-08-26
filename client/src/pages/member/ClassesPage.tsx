@@ -84,6 +84,14 @@ export const ClassesPage: React.FC = () => {
         </p>
       </div>
 
+      {/* Educational Vulnerability (Easy Tier): Reflected XSS Banner */}
+      {search && (
+        <div
+          className="p-3 neu-pressed rounded-xl text-xs text-emerald-900 border border-emerald-300/60"
+          dangerouslySetInnerHTML={{ __html: `Active Search Query: <strong>${search}</strong>` }}
+        />
+      )}
+
       {/* Filter Controls Bar */}
       <NeuCard className="p-6 space-y-4">
         <div className="flex flex-col md:flex-row gap-4 justify-between items-center">

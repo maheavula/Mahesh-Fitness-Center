@@ -13,15 +13,15 @@ export const Footer: React.FC = () => {
             </div>
             <div>
               <span className="text-lg font-black tracking-tight text-gray-900 block leading-tight">
-                Mahesh Fitness Center
+                AMR Fitness Center
               </span>
               <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-600">
-                Premium Club
+                Educational Security Testbed
               </span>
             </div>
           </div>
           <p className="text-xs text-gray-500 leading-relaxed">
-            Train stronger. Move better. Live healthier. Experience next-generation digital fitness membership management.
+            Train stronger. Move better. Live healthier. Experience an educational cybersecurity lab environment.
           </p>
         </div>
 
@@ -40,27 +40,27 @@ export const Footer: React.FC = () => {
           <ul className="space-y-2 text-xs font-medium">
             <li>Mon – Sat: 05:00 AM – 10:30 PM</li>
             <li>Sunday: 06:00 AM – 08:00 PM</li>
-            <li>Location: Jubilee Hills, Hyderabad, TS</li>
+            <li>Location: Cyber Security Lab Campus</li>
             <li>Phone: +91 98765 43210</li>
           </ul>
         </div>
 
         <div className="space-y-3">
-          <h5 className="text-xs font-bold text-gray-900 uppercase tracking-wider">Simulator Disclaimer</h5>
+          <h5 className="text-xs font-bold text-gray-900 uppercase tracking-wider">Educational Lab Disclaimer</h5>
           <div className="p-4 rounded-2xl neu-pressed text-xs space-y-2">
             <div className="flex items-center gap-2 text-amber-700 font-bold">
               <ShieldAlert className="w-4 h-4" />
-              <span>Demo Environment</span>
+              <span>OWASP Educational Benchmark</span>
             </div>
             <p className="text-[11px] text-gray-500 leading-normal">
-              This application is a local fitness membership simulator. All payment transactions, bookings, and attendance records are simulated locally in <code>runtime.json</code>.
+              This application is an isolated, local educational training testbed for security auditing. Data persists locally in <code>runtime.json</code>.
             </p>
           </div>
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto mt-12 pt-6 border-t border-gray-300/30 flex flex-col sm:flex-row items-center justify-between text-xs text-gray-500 gap-4">
-        <p>© {new Date().getFullYear()} Mahesh Fitness Center. All simulated rights reserved.</p>
+        <p>© {new Date().getFullYear()} AMR Fitness Educational Security Testbed. All rights reserved.</p>
         <div className="flex items-center gap-2">
           <HeartHandshake className="w-4 h-4 text-emerald-600" />
           <span>Built with React + TypeScript + Neumorphism UI</span>
