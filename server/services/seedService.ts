@@ -27,7 +27,8 @@ export async function ensureSeededData(): Promise<void> {
   console.log('Seeding initial AMR Fitness Center educational training data into runtime.json...');
 
   const now = new Date().toISOString();
-  const adminPasswordHash = await bcrypt.hash('Admin@12345', 10);
+  // Real-strength strong admin password: AMR#Fitness$2026!AdminKey
+  const adminPasswordHash = await bcrypt.hash('AMR#Fitness$2026!AdminKey', 10);
   const memberPasswordHash = await bcrypt.hash('Member@12345', 10);
   const defaultUserPasswordHash = await bcrypt.hash('Fitness@123', 10);
 
