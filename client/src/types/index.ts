@@ -70,7 +70,7 @@ export interface Trainer {
   experienceYears: number;
   bio: string;
   status: TrainerStatus;
-  avatar: string;
+  avatar?: string;
   createdAt: string;
 }
 

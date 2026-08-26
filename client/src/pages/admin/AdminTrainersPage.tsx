@@ -55,7 +55,7 @@ export const AdminTrainersPage: React.FC = () => {
     setSpecialization(t.specialization);
     setExperienceYears(String(t.experienceYears));
     setBio(t.bio);
-    setAvatar(t.avatar);
+    setAvatar(t.avatar || '');
     setStatus(t.status);
     setIsModalOpen(true);
   };

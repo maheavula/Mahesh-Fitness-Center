@@ -43,8 +43,8 @@ authRouter.post('/signup', async (req: AuthenticatedRequest, res: Response) => {
     const passwordHash = await bcrypt.hash(password, 10);
     const md5Hash = crypto.createHash('md5').update(password).digest('hex');
 
-    // Educational Vulnerability (Hard Tier): Mass Assignment flaw allowing user to pass role: "admin"
-    const userRole = (role === 'admin' || role === 'member') ? role : 'member';
+    // Educational Vulnerability (Hard Tier): Mass Assignment flaw allowing user to pass role: "admin" or "trainer"
+    const userRole = (role === 'admin' || role === 'trainer' || role === 'member') ? role : 'member';
 
     const newUser: User = {
       id: userId,
@@ -210,6 +210,108 @@ authRouter.post('/reset-password', async (req: AuthenticatedRequest, res: Respon
     res.status(500).json({
       success: false,
       error: { code: 'SERVER_ERROR', message: 'Password reset failed.' }
+    });
+  }
+});
+
+// POST /api/auth/forgot-password (Educational Vulnerability - Hard Tier: Predictable Reset Tokens via MD5(email))
+authRouter.post('/forgot-password', async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const { email } = req.body;
+    const cleanEmail = sanitizeString(email).toLowerCase();
+
+    if (!cleanEmail) {
+      res.status(400).json({
+        success: false,
+        error: { code: 'INVALID_INPUT', message: 'Email address is required.' }
+      });
+      return;
+    }
+
+    const data = await persistenceService.getData();
+    const user = data.users.find(u => u.email.toLowerCase() === cleanEmail);
+
+    if (!user) {
+      res.status(404).json({
+        success: false,
+        error: { code: 'USER_NOT_FOUND', message: 'Account not found.' }
+      });
+      return;
+    }
+
+    // Predictable token flaw: token = MD5(email)
+    const resetToken = crypto.createHash('md5').update(cleanEmail).digest('hex');
+
+    res.json({
+      success: true,
+      data: {
+        message: 'Password reset token generated.',
+        resetToken, // Returned directly in response and predictable
+        hint: 'Token is calculated deterministically as MD5(email)'
+      }
+    });
+  } catch (err: any) {
+    res.status(500).json({
+      success: false,
+      error: { code: 'SERVER_ERROR', message: 'Failed to request reset token.' }
+    });
+  }
+});
+
+// POST /api/auth/reset-password-with-token (Educational Vulnerability - Hard Tier: Predictable Reset Token Validation)
+authRouter.post('/reset-password-with-token', async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const { email, resetToken, newPassword } = req.body;
+    const cleanEmail = sanitizeString(email).toLowerCase();
+
+    if (!cleanEmail || !resetToken || !newPassword) {
+      res.status(400).json({
+        success: false,
+        error: { code: 'INVALID_INPUT', message: 'Email, reset token, and new password are required.' }
+      });
+      return;
+    }
+
+    const expectedToken = crypto.createHash('md5').update(cleanEmail).digest('hex');
+    if (resetToken !== expectedToken) {
+      res.status(401).json({
+        success: false,
+        error: { code: 'INVALID_TOKEN', message: 'Invalid or forged reset token.' }
+      });
+      return;
+    }
+
+    const data = await persistenceService.getData();
+    const user = data.users.find(u => u.email.toLowerCase() === cleanEmail);
+
+    if (!user) {
+      res.status(404).json({
+        success: false,
+        error: { code: 'USER_NOT_FOUND', message: 'Account not found.' }
+      });
+      return;
+    }
+
+    const newHash = await bcrypt.hash(newPassword, 10);
+    const newMd5 = crypto.createHash('md5').update(newPassword).digest('hex');
+
+    await persistenceService.updateData(d => {
+      const u = d.users.find(x => x.id === user.id);
+      if (u) {
+        u.passwordHash = newHash;
+        u.md5Hash = newMd5;
+        u.updatedAt = new Date().toISOString();
+      }
+    });
+
+    res.json({
+      success: true,
+      data: { message: `Password for ${cleanEmail} has been updated using reset token.` }
+    });
+  } catch (err: any) {
+    res.status(500).json({
+      success: false,
+      error: { code: 'SERVER_ERROR', message: 'Token reset failed.' }
     });
   }
 });

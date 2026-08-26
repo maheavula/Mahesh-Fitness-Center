@@ -24,7 +24,7 @@ export async function ensureSeededData(): Promise<void> {
     return;
   }
 
-  console.log('Seeding initial AMR Fitness Center educational training data into runtime.json...');
+  console.log('Initializing AMR Fitness application environment...');
 
   const now = new Date().toISOString();
   // Real-strength strong admin password: AMR#Fitness$2026!AdminKey
@@ -228,19 +228,17 @@ export async function ensureSeededData(): Promise<void> {
       name: 'Arjun Rao',
       specialization: 'Strength & Conditioning',
       experienceYears: 8,
-      bio: 'Certified CSCS coach with passion for hyper-trophy, Olympic weightlifting, and mobility mechanics.',
+      bio: 'Certified CSCS coach with passion for hypertrophy, barbell mechanics, and mobility integration.',
       status: 'active',
-      avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
       createdAt: '2026-01-01T00:00:00.000Z'
     },
     {
       id: 'TRN-10002',
-      name: 'Dr. Sunita Deshmukh',
+      name: 'Sunita Deshmukh',
       specialization: 'Yoga & Functional Mobility',
       experienceYears: 12,
       bio: 'Master of Ashtanga Yoga and spinal rehab. Specialized in posture correction and breathwork integration.',
       status: 'active',
-      avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80',
       createdAt: '2026-01-01T00:00:00.000Z'
     },
     {
@@ -250,7 +248,6 @@ export async function ensureSeededData(): Promise<void> {
       experienceYears: 6,
       bio: 'High-intensity conditioning coach focused on cardiovascular endurance and fat loss program design.',
       status: 'active',
-      avatar: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=400&q=80',
       createdAt: '2026-01-01T00:00:00.000Z'
     },
     {
@@ -258,9 +255,8 @@ export async function ensureSeededData(): Promise<void> {
       name: 'Maya Lin',
       specialization: 'Pilates Core & Rehabilitation',
       experienceYears: 9,
-      bio: 'Stott Pilates certified instructor with expertise in core stability, posture alignment, and dynamic balance.',
+      bio: 'Certified instructor with expertise in core stability, posture alignment, and dynamic balance.',
       status: 'active',
-      avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=400&q=80',
       createdAt: '2026-01-01T00:00:00.000Z'
     },
     {
@@ -268,9 +264,8 @@ export async function ensureSeededData(): Promise<void> {
       name: 'Kabir Fernandes',
       specialization: 'Boxing & Functional Cardio',
       experienceYears: 10,
-      bio: 'Former state amateur boxer specializing in agility drills, heavy bag combinations, and explosive power.',
+      bio: 'Fitness coach specializing in agility drills, heavy bag combinations, and explosive power.',
       status: 'active',
-      avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80',
       createdAt: '2026-01-01T00:00:00.000Z'
     }
   ];
@@ -504,5 +499,5 @@ export async function ensureSeededData(): Promise<void> {
   };
 
   await persistenceService.saveData(fullData);
-  console.log('Successfully seeded demo data in runtime.json!');
+  console.log('AMR Fitness application environment initialized.');
 }

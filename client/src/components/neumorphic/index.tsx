@@ -1,4 +1,5 @@
 import React from 'react';
+import { User } from 'lucide-react';
 
 // 1. NeuCard
 export interface NeuCardProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -267,27 +268,22 @@ export interface NeuAvatarProps {
   size?: 'sm' | 'md' | 'lg';
 }
 
-export const NeuAvatar: React.FC<NeuAvatarProps> = ({ src, name, size = 'md' }) => {
+export const NeuAvatar: React.FC<NeuAvatarProps> = ({ size = 'md' }) => {
   const sizeClasses = {
-    sm: 'w-8 h-8 text-xs',
-    md: 'w-10 h-10 text-sm',
-    lg: 'w-16 h-16 text-xl',
+    sm: 'w-8 h-8',
+    md: 'w-10 h-10',
+    lg: 'w-16 h-16',
   };
 
-  const initials = name
-    .split(' ')
-    .map(n => n[0])
-    .join('')
-    .substring(0, 2)
-    .toUpperCase();
+  const iconSize = {
+    sm: 'w-4 h-4',
+    md: 'w-5 h-5',
+    lg: 'w-8 h-8',
+  };
 
   return (
-    <div className={`rounded-full neu-raised flex items-center justify-center font-bold text-emerald-700 overflow-hidden ${sizeClasses[size]}`}>
-      {src ? (
-        <img src={src} alt={name} className="w-full h-full object-cover" />
-      ) : (
-        <span>{initials}</span>
-      )}
+    <div className={`rounded-full neu-raised flex items-center justify-center font-bold text-emerald-700 overflow-hidden flex-shrink-0 ${sizeClasses[size]}`}>
+      <User className={`${iconSize[size]} text-emerald-600`} />
     </div>
   );
 };

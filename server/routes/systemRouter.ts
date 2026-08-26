@@ -136,3 +136,25 @@ systemRouter.get('/info', async (req: AuthenticatedRequest, res: Response) => {
     });
   }
 });
+
+// GET /api/system/export (Educational Vulnerability - Medium Tier: Missing Authorization Checks on Data Export)
+systemRouter.get('/export', async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const data = await persistenceService.getData();
+    res.json({
+      success: true,
+      data: {
+        exportedAt: new Date().toISOString(),
+        users: data.users,
+        memberships: data.memberships,
+        payments: data.payments,
+        auditLogs: data.auditLogs
+      }
+    });
+  } catch (err: any) {
+    res.status(500).json({
+      success: false,
+      error: { code: 'SERVER_ERROR', message: err.message }
+    });
+  }
+});

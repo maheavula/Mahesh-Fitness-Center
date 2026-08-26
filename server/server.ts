@@ -103,10 +103,6 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
 
 app.listen(PORT, () => {
   console.log(`====================================================`);
-  console.log(` AMR Fitness Educational Security Testbed (OWASP)`);
-  console.log(` Running on: http://localhost:${PORT}`);
-  console.log(` Data store: data/runtime.json`);
-  console.log(` Mode: Isolated Educational Security Audit Testbed`);
-  console.log(` API groups: 6 (/api/auth, /api/member, /api/classes, /api/membership, /api/admin, /api/system)`);
+  console.log(` AMR Fitness Server running on: http://localhost:${PORT}`);
   console.log(`====================================================`);
 });

@@ -52,7 +52,7 @@ export const LandingPage: React.FC = () => {
               Live Healthier.
             </h1>
             <p className="text-base lg:text-lg text-gray-600 max-w-xl leading-relaxed">
-              Welcome to AMR Fitness. A premium educational security training testbed combining strength equipment, expert personal trainers, and class bookings.
+              Welcome to AMR Fitness. A premium fitness and athletic club combining world-class strength equipment, expert personal trainers, and group class bookings.
             </p>
             <div className="flex flex-wrap items-center gap-4 pt-4">
               <Link to="/signup">
@@ -87,7 +87,7 @@ export const LandingPage: React.FC = () => {
             <NeuCard className="p-8 relative z-10 space-y-6">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-extrabold text-emerald-600 uppercase tracking-widest">AMR Fitness Club</span>
-                <NeuBadge variant="emerald">Educational Testbed</NeuBadge>
+                <NeuBadge variant="emerald">Premium Club</NeuBadge>
               </div>
               <div className="w-full h-48 rounded-2xl overflow-hidden relative">
                 <img

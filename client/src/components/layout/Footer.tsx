@@ -1,6 +1,5 @@
 import React from 'react';
-import { Dumbbell, ShieldAlert, HeartHandshake } from 'lucide-react';
-import { NeuBadge } from '../neumorphic/index.js';
+import { Dumbbell, HeartHandshake, Award } from 'lucide-react';
 
 export const Footer: React.FC = () => {
   return (
@@ -16,12 +15,12 @@ export const Footer: React.FC = () => {
                 AMR Fitness Center
               </span>
               <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-600">
-                Educational Security Testbed
+                Premium Fitness & Athletic Club
               </span>
             </div>
           </div>
           <p className="text-xs text-gray-500 leading-relaxed">
-            Train stronger. Move better. Live healthier. Experience an educational cybersecurity lab environment.
+            Train stronger. Move better. Live healthier. Experience world-class strength training, group fitness classes, and personalized coaching.
           </p>
         </div>
 
@@ -40,27 +39,30 @@ export const Footer: React.FC = () => {
           <ul className="space-y-2 text-xs font-medium">
             <li>Mon – Sat: 05:00 AM – 10:30 PM</li>
             <li>Sunday: 06:00 AM – 08:00 PM</li>
-            <li>Location: Cyber Security Lab Campus</li>
+            <li>Location: Main City Center Campus</li>
             <li>Phone: +91 98765 43210</li>
           </ul>
         </div>
 
         <div className="space-y-3">
-          <h5 className="text-xs font-bold text-gray-900 uppercase tracking-wider">Educational Lab Disclaimer</h5>
+          <h5 className="text-xs font-bold text-gray-900 uppercase tracking-wider">Facilities & Amenities</h5>
           <div className="p-4 rounded-2xl neu-pressed text-xs space-y-2">
-            <div className="flex items-center gap-2 text-amber-700 font-bold">
-              <ShieldAlert className="w-4 h-4" />
-              <span>OWASP Educational Benchmark</span>
+            <div className="flex items-center gap-2 text-emerald-700 font-bold">
+              <Award className="w-4 h-4" />
+              <span>World-Class Experience</span>
             </div>
-            <p className="text-[11px] text-gray-500 leading-normal">
-              This application is an isolated, local educational training testbed for security auditing. Data persists locally in <code>runtime.json</code>.
-            </p>
+            <ul className="text-[11px] text-gray-500 leading-normal space-y-1">
+              <li>• Premium Strength Racks & Free Weights</li>
+              <li>• Cardio & Endurance Zone</li>
+              <li>• Group Fitness Studios</li>
+              <li>• Certified Personal Coaching</li>
+            </ul>
           </div>
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto mt-12 pt-6 border-t border-gray-300/30 flex flex-col sm:flex-row items-center justify-between text-xs text-gray-500 gap-4">
-        <p>© {new Date().getFullYear()} AMR Fitness Educational Security Testbed. All rights reserved.</p>
+        <p>© {new Date().getFullYear()} AMR Fitness Center. All rights reserved.</p>
         <div className="flex items-center gap-2">
           <HeartHandshake className="w-4 h-4 text-emerald-600" />
           <span>Built with React + TypeScript + Neumorphism UI</span>

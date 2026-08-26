@@ -2,12 +2,21 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-// Import @oai/artifact-tool
+// Import @oai/artifact-tool from Bank of Mahesh node_modules
 import { SpreadsheetFile, Workbook } from 'file:///D:/Bank%20of%20Mahesh/outputs/security-lab-matrix/node_modules/@oai/artifact-tool/dist/artifact_tool.mjs';
 
 const outputDir = 'D:/Mahesh Fitness Center/outputs/security-lab-matrix';
 
 const rows = [
+  // EASY TIER (5 Flaws)
+  [
+    'Missing HTTPS',
+    'Easy',
+    'A05:2021 Security Misconfiguration',
+    '1. Connect to http://localhost:3000 in browser or curl.\n2. Inspect network traffic and transport protocol.\n3. Verify HTTP plain text transmission without SSL/TLS certificates.',
+    'Cleartext credential interception on network\nMan-in-the-Middle (MitM) session hijacking\nData tampering in transit',
+    'Enforce HTTPS/TLS encryption with SSL certificates\nRedirect HTTP traffic to HTTPS (301 Moved Permanently)\nImplement HTTP Strict Transport Security (HSTS) headers'
+  ],
   [
     'Reflected XSS',
     'Easy',
@@ -17,20 +26,38 @@ const rows = [
     'Contextual output encoding (use React JSX {search})\nStrict Content Security Policy (CSP)\nInput sanitization via DOMPurify'
   ],
   [
-    'No rate limiting & unlimited login',
+    'No rate limiting',
     'Easy',
-    'A07:2021 Identification & Auth Failures',
-    '1. Send >15 rapid POST /api/auth/login requests with invalid passwords.\n2. Inspect response status codes in Dev Tools / Postman.\n3. Verify requests return 401 without 429 throttling or lockout.',
-    'Automated credential stuffing & password spraying\nHigh CPU load from bcrypt hashing\nIncreased probability of account takeover',
-    'Implement express-rate-limit middleware\nAccount lockout after 5 failed attempts\nCAPTCHA verification on high frequency'
+    'A04:2021 Insecure Design',
+    '1. Send >15 rapid POST /api/auth/login or /signup requests.\n2. Inspect response HTTP status codes in Dev Tools / Postman.\n3. Verify requests process without 429 Too Many Requests status code.',
+    'Automated credential stuffing & password spraying\nHigh CPU load from bcrypt hashing\nNoisy monitoring and logs',
+    'Implement express-rate-limit middleware on auth routes\nPer-IP and per-account request rate caps\nAlert on anomalous request volume spikes'
   ],
   [
-    'Open CORS & exposed headers',
+    'Unlimited login attempts',
+    'Easy',
+    'A07:2021 Identification & Auth Failures',
+    '1. Submit 20 consecutive POST /api/auth/login requests with invalid passwords.\n2. Verify server returns 401 continuously without account lockout or progressive delay.',
+    'Increased success rate of brute-force password guessing\nAccount takeover of weak passwords\nServer resource consumption',
+    'Account lockout policy after 5 consecutive failed logins\nProgressive response delay on failed attempts\nCAPTCHA verification on high frequency'
+  ],
+  [
+    'Open CORS policy & exposed headers',
     'Easy',
     'A05:2021 Security Misconfiguration',
     '1. Send curl -I http://localhost:3000/api/system/info.\n2. Inspect response HTTP headers.\n3. Verify Access-Control-Allow-Origin: * and X-Powered-By: Express are exposed.',
     'Cross-origin data leakage to arbitrary web origins\nBackend tech stack fingerprinting\nTargeted exploit selection for Express/Node',
     'Restrict CORS origin strictly to trusted domains\nDisable X-Powered-By header via app.disable()\nMount Helmet security headers middleware'
+  ],
+
+  // MEDIUM TIER (5 Flaws)
+  [
+    'Missing authorization checks',
+    'Medium',
+    'A01:2021 Broken Access Control',
+    '1. Issue unauthenticated GET /api/system/export or GET /api/membership/payments/:id.\n2. Inspect API response payload.\n3. Verify raw user records, audit logs, and payments are returned without authentication.',
+    'Unauthorized administrative data export\nPrivacy breaches and regulatory incidents\nFull database disclosure to unauthenticated users',
+    'Enforce requireAuth middleware across all sensitive endpoints\nServer-side authorization policies\nDeny by default endpoint permissions'
   ],
   [
     'Horizontal privilege escalation (IDOR)',
@@ -41,7 +68,7 @@ const rows = [
     'Strict server-side identity binding (req.user.id)\nValidate requested_member_id === session_member_id\nDeny by default authorization policies'
   ],
   [
-    'Sensitive data exposure (Password hash leak)',
+    'Sensitive data exposure (Hash leak)',
     'Medium',
     'A02:2021 Cryptographic Failures',
     '1. Issue GET /api/auth/me or GET /api/admin/members.\n2. Inspect JSON response payload under data.user.\n3. Verify passwordHash (bcrypt) and md5Hash fields are returned in plain JSON text.',
@@ -56,6 +83,16 @@ const rows = [
     'Trivial account takeover of any user by email\nImmediate compromise of lead administrator accounts\nUnauthorized profile modifications and data loss',
     'Time-limited cryptographic reset tokens via email\nMulti-factor authentication (MFA) or current password check\nInstant email alert on password reset'
   ],
+  [
+    'Known CVE components',
+    'Medium',
+    'A06:2021 Vulnerable & Outdated Components',
+    '1. Inspect package.json dependency declarations.\n2. Run npm audit or dependency vulnerability scanners.\n3. Verify pinned legacy dependencies (lodash@4.17.15, qs@6.7.0, jsonwebtoken@8.5.1) exhibit public CVEs.',
+    'Known exploit exposure via unpatched CVEs\nTransitive prototype pollution vulnerabilities\nCompliance and audit audit failures',
+    'Update dependencies to supported non-vulnerable releases\nAutomate dependency vulnerability scanning (SCA/SBOM)\nEnforce patching SLAs'
+  ],
+
+  // HARD TIER (5 Flaws)
   [
     'Hardcoded secret in client bundle',
     'Hard',
@@ -73,11 +110,19 @@ const rows = [
     'Server-side price lookup based on planId\nNever trust client-supplied prices or statuses\nValidate payment gateway signatures/webhooks'
   ],
   [
+    'Predictable reset tokens',
+    'Hard',
+    'A07:2021 Identification & Auth Failures',
+    '1. Submit POST /api/auth/forgot-password with target email.\n2. Observe resetToken returned: MD5(email).\n3. Submit POST /api/auth/reset-password-with-token using forged token MD5(target_email).\n4. Verify target account password is reset via forged token.',
+    'Unauthorized password reset for arbitrary accounts\nAdmin account takeover via forged reset tokens\nComplete auth control collapse',
+    'Cryptographically secure pseudo-random generators (CSPRNG)\nStore hashed high-entropy reset tokens server-side\nEnforce short expiration TTL (15 minutes)'
+  ],
+  [
     'Vertical privilege escalation (Role mass assignment)',
     'Hard',
     'A01:2021 Broken Access Control',
-    '1. Log in as standard member (member@amrfitness.local).\n2. Submit PUT /api/member/profile or POST /api/auth/signup with payload {"role":"admin"}.\n3. Query GET /api/auth/me.\n4. Verify account role is upgraded to admin.',
-    'Standard member escalates privilege to full admin\nUnauthorized management of plans, trainers, and members\nCompromise of administrative audit trail',
+    '1. Log in as standard member (member@amrfitness.local).\n2. Submit PUT /api/member/profile or POST /api/auth/signup with payload {"role":"admin"} or {"role":"trainer"}.\n3. Query GET /api/auth/me.\n4. Verify account role is upgraded to admin or trainer.',
+    'Standard member escalates privilege to admin or trainer\nUnauthorized management of plans, trainers, and members\nCompromise of administrative audit trail',
     'Strict Request DTO field allowlisting (exclude role)\nRestrict role updates to dedicated admin endpoints\nSeparate internal model properties from public input'
   ],
   [
@@ -114,7 +159,7 @@ async function buildMatrix() {
   sheet.getRange(`A5:F${rows.length + 4}`).format = { verticalAlignment: 'top', wrapText: true, borders: { preset: 'inside', style: 'thin', color: '#CBD5E1' } };
   sheet.getRange(`A5:A${rows.length + 4}`).format.font = { bold: true, color: '#0F172A' };
   sheet.getRange(`B5:B${rows.length + 4}`).format.horizontalAlignment = 'center';
-  sheet.getRange(`A5:F${rows.length + 4}`).format.rowHeight = 72;
+  sheet.getRange(`A5:F${rows.length + 4}`).format.rowHeight = 76;
   
   // Column Widths
   sheet.getRange('A:A').format.columnWidth = 28;
@@ -149,16 +194,24 @@ async function buildMatrix() {
   const check = await workbook.inspect({ kind: 'table', range: `Vulnerability Matrix!A1:F${footerRowIndex}`, include: 'values,formulas', tableMaxRows: footerRowIndex, tableMaxCols: 6 });
   console.log(check.ndjson);
 
-  const errors = await workbook.inspect({ kind: 'match', searchTerm: '#REF!|#DIV/0!|#VALUE!|#NAME\\?|#N/A', options: { useRegex: true, maxResults: 30 }, summary: 'formula error scan' });
-  console.log(errors.ndjson);
-
   const preview = await workbook.render({ sheetName: 'Vulnerability Matrix', range: `A1:F${footerRowIndex}`, scale: 1, format: 'png' });
   await fs.writeFile(`${outputDir}/preview.png`, new Uint8Array(await preview.arrayBuffer()));
 
+  const outputFilePath = `${outputDir}/amr-fitness-security-vulnerability-matrix.xlsx`;
+  try {
+    await fs.unlink(outputFilePath);
+  } catch (e) {}
+
   const output = await SpreadsheetFile.exportXlsx(workbook);
-  await output.save(`${outputDir}/amr-fitness-security-vulnerability-matrix.xlsx`);
+  try {
+    await output.save(outputFilePath);
+  } catch (err) {
+    const altPath = `${outputDir}/amr-fitness-vulnerability-matrix.xlsx`;
+    await output.save(altPath);
+    console.log(`Saved matrix to ${altPath}`);
+  }
   
-  console.log('Successfully generated AMR Fitness Security Matrix spreadsheet and preview PNG!');
+  console.log('Successfully generated complete 15-item AMR Fitness Security Matrix spreadsheet!');
 }
 
 buildMatrix().catch(console.error);
