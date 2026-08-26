@@ -1,7 +1,7 @@
-# Mahesh Fitness Center
+# AMR Fitness
 
 **Tagline:** Train stronger. Move better. Live healthier.  
-**Product Type:** Full-Stack Fitness Membership & Gym Management Simulator  
+**Product Type:** Full-Stack Fitness Membership & Security Training Simulator  
 **UI Design Language:** Tactile Neumorphism  
 **Persistence:** Atomic `/data/runtime.json`  
 **API Limit:** Exactly 6 Logical API Groups  
@@ -10,7 +10,7 @@
 
 ## 1. Executive Summary
 
-**Mahesh Fitness Center** is a complete, polished, end-to-end digital fitness club membership platform. It allows members to register, log in securely, activate simulated memberships, book group fitness classes, track training activities, and manage profiles. Administrators can manage members, plans, trainers, class schedules, bookings, attendance check-ins, simulated payment ledgers, and system audit logs.
+**AMR Fitness** is a complete, polished, end-to-end digital fitness club membership platform and educational security training testbed. It allows members to register, log in securely, activate simulated memberships, book group fitness classes, track training activities, and manage profiles. Administrators can manage members, plans, trainers, class schedules, bookings, attendance check-ins, simulated payment ledgers, and system audit logs.
 
 ---
 
@@ -27,11 +27,11 @@
 ## 3. Demo Credentials
 
 ### 🛡️ Administrator Account
-- **Email:** `admin@maheshfitness.local`
-- **Password:** `Admin@12345`
+- **Email:** `admin@amrfitness.local`
+- **Password:** `AMR#Fitness$2026!AdminKey`
 
 ### 🏋️ Member Account
-- **Email:** `member@maheshfitness.local`
+- **Email:** `member@amrfitness.local`
 - **Password:** `Member@12345`
 
 ---
@@ -84,4 +84,3 @@ npm run test
 - All payment transactions, UPI transfers, and card authorizations are **simulated locally**.
 - No real banking or payment gateways are connected.
 - All application state is stored locally in `data/runtime.json`.
-- No real medical or wearable device APIs are integrated.
