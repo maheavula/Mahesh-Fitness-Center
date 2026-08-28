@@ -11,17 +11,13 @@ export const AdminLayout: React.FC = () => {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-[#e8ecf2] flex items-center justify-center text-sm font-semibold text-gray-600">
-        Authenticating administrator session...
+        Authenticating session...
       </div>
     );
   }
 
-  if (!user) {
+  if (!user || user.role !== 'admin') {
     return <Navigate to="/login" replace />;
-  }
-
-  if (user.role !== 'admin') {
-    return <Navigate to="/app" replace />;
   }
 
   return (

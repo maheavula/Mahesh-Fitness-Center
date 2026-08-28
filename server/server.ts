@@ -23,8 +23,32 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Disable strict routing so trailing slashes match routes directly without 302 Found redirects
+app.set('strict routing', false);
+
 // Initialize seed data on startup
 await ensureSeededData();
+
+// In-memory URL normalization middleware (prevents 302 Found redirects during DAST Burp Suite proxy testing)
+app.use((req: Request, res: Response, next: NextFunction) => {
+  if (req.url.length > 1 && req.url.includes('/?')) {
+    req.url = req.url.replace('/?', '?');
+  } else if (req.url.length > 1 && req.url.endsWith('/') && !req.url.startsWith('/api/')) {
+    req.url = req.url.slice(0, -1);
+  } else if (req.url.length > 1 && req.url.endsWith('/') && req.url.startsWith('/api/')) {
+    req.url = req.url.slice(0, -1);
+  }
+  next();
+});
+
+// Custom Security Headers Middleware for DAST auditing
+app.use((req: Request, res: Response, next: NextFunction) => {
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+  res.setHeader('X-Application-Environment', 'educational-testbed');
+  res.setHeader('X-Debug-Mode', 'enabled');
+  next();
+});
 
 // Educational Vulnerability (Easy Tier): Express Tech Stack Header Exposed (x-powered-by enabled)
 // app.disable('x-powered-by') omitted intentionally for student fingerprinting audits
@@ -89,14 +113,18 @@ app.get('*', (req: Request, res: Response) => {
   });
 });
 
-// Global Error Handler
+// Global Error Handler (Educational Vulnerability - Medium Tier: Verbose Error Messages & Stack Trace Leakage)
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   console.error('Unhandled server error:', err);
   res.status(err.status || 500).json({
     success: false,
     error: {
       code: err.code || 'INTERNAL_SERVER_ERROR',
-      message: 'An unexpected server error occurred. Please try again later.'
+      message: err.message || 'An unexpected server error occurred.',
+      stack: err.stack,
+      modulePath: req.originalUrl,
+      environment: process.env.NODE_ENV || 'development',
+      nodeVersion: process.version
     }
   });
 });

@@ -63,7 +63,7 @@ const rows = [
     'Horizontal privilege escalation (IDOR)',
     'Medium',
     'A01:2021 Broken Access Control',
-    '1. Log in as Member 1 (member@amrfitness.local, MEM-10001).\n2. Submit GET /api/member/activity?memberId=MEM-10002 or /profile?memberId=MEM-10002.\n3. Verify API returns Member MEM-10002\'s private data without ownership check.',
+    '1. Log in as Member 1 (member@amrfitness.local, kmc-143).\n2. Submit GET /api/member/profile?memberId=kmc-144 or PUT /api/member/profile?memberId=kmc-144.\n3. Verify API returns Member kmc-144\'s private data and updates profile without ownership check.',
     'Unauthorized exposure of private workout and health data\nPotential alteration of target member profiles/bookings\nViolation of data privacy regulations',
     'Strict server-side identity binding (req.user.id)\nValidate requested_member_id === session_member_id\nDeny by default authorization policies'
   ],
@@ -84,12 +84,12 @@ const rows = [
     'Time-limited cryptographic reset tokens via email\nMulti-factor authentication (MFA) or current password check\nInstant email alert on password reset'
   ],
   [
-    'Known CVE components',
+    'Verbose error messages & stack trace leakage',
     'Medium',
-    'A06:2021 Vulnerable & Outdated Components',
-    '1. Inspect package.json dependency declarations.\n2. Run npm audit or dependency vulnerability scanners.\n3. Verify pinned legacy dependencies (lodash@4.17.15, qs@6.7.0, jsonwebtoken@8.5.1) exhibit public CVEs.',
-    'Known exploit exposure via unpatched CVEs\nTransitive prototype pollution vulnerabilities\nCompliance and audit audit failures',
-    'Update dependencies to supported non-vulnerable releases\nAutomate dependency vulnerability scanning (SCA/SBOM)\nEnforce patching SLAs'
+    'A05:2021 Security Misconfiguration',
+    '1. Send request to GET /api/system/debug/error or click System Diagnostics in footer.\n2. Inspect API response HTTP status (500 Internal Server Error) and JSON payload.\n3. Verify server leaks raw Node.js stack traces, file system paths, and internal error codes.',
+    'System internal file path and environment disclosure\nFacilitates precise targeted exploit payload creation\nExposes internal application architecture to attackers',
+    'Generic error responses in production environments\nLog detailed stack traces to secure server-side logging systems\nDisable verbose error middleware in production builds'
   ],
 
   // HARD TIER (5 Flaws)
@@ -97,9 +97,9 @@ const rows = [
     'Hardcoded secret in client bundle',
     'Hard',
     'A05:2021 Security Misconfiguration',
-    '1. Search compiled JS bundle in dist/client/assets/ for AMR_SECRET_MASTER_API_KEY.\n2. Locate AMR_SECRET_MASTER_API_KEY_2026_V1 in client bundle.\n3. Submit GET /api/admin/dashboard with header "x-admin-key: AMR_SECRET_MASTER_API_KEY_2026_V1".\n4. Verify server grants full admin access without authentication.',
-    'Complete system and administrative takeover\nBypasses standard authentication and role checks\nPermanent compromise as long as secret is in client bundle',
-    'Zero secret client bundles (never embed master keys)\nServer-side authorization only\nAutomated secret scanning (GitGuardian/TruffleHog) in CI/CD'
+    '1. Open browser DevTools (F12) -> Sources tab or inspect loaded JS bundle (assets/index-*.js) in Burp Suite.\n2. Search JS assets for API key references to find AMR_SECRET_MASTER_API_KEY_2026_V1.\n3. Send HTTP request to GET /api/admin/dashboard with header "x-admin-key: AMR_SECRET_MASTER_API_KEY_2026_V1".\n4. Verify backend grants full administrative privileges without authenticating.',
+    'Complete administrative takeover of the application\nBypasses standard authentication and session controls\nPermanent backdoor exposure while secret exists in client build assets',
+    'Never embed administrative API keys or master secrets in client-side code\nImplement strict server-side authentication and session authorization\nEnforce automated secret scanning (GitGuardian/TruffleHog) in build pipelines'
   ],
   [
     'Subscription tier price bypass',
@@ -113,7 +113,7 @@ const rows = [
     'Predictable reset tokens',
     'Hard',
     'A07:2021 Identification & Auth Failures',
-    '1. Submit POST /api/auth/forgot-password with target email.\n2. Observe resetToken returned: MD5(email).\n3. Submit POST /api/auth/reset-password-with-token using forged token MD5(target_email).\n4. Verify target account password is reset via forged token.',
+    '1. Submit POST /api/auth/forgot-password with target email.\n2. Intercept response to observe resetToken: MD5(email).\n3. Submit POST /api/auth/reset-password-with-token using token MD5(target_email).\n4. Verify target account password is reset via forged token.',
     'Unauthorized password reset for arbitrary accounts\nAdmin account takeover via forged reset tokens\nComplete auth control collapse',
     'Cryptographically secure pseudo-random generators (CSPRNG)\nStore hashed high-entropy reset tokens server-side\nEnforce short expiration TTL (15 minutes)'
   ],
@@ -135,8 +135,36 @@ const rows = [
   ]
 ];
 
+const testDataRows = [
+  ['Account Type', 'Email Address', 'Password', 'Member ID / Role', 'Notes / Context'],
+  ['Admin Account', 'admin@amrfitness.local', 'AMR#Fitness$2026!AdminKey', 'Role: admin', 'Primary lead administrator account'],
+  ['Primary Member', 'member@amrfitness.local', 'Member@12345', 'kmc-143 / role: member', 'Primary student member test account'],
+  ['Secondary Member', 'priya.s@example.com', 'Fitness@123', 'kmc-144 / role: member', 'Target member for IDOR testing'],
+  ['Tertiary Member', 'ananya.v@example.com', 'Fitness@123', 'kmc-145 / role: member', 'Target member for IDOR testing'],
+  ['', '', '', '', ''],
+  ['Payment Category', 'Field Name', 'Sample Test Value', 'Format / Type', 'Usage Notes'],
+  ['Credit / Debit Card', 'Cardholder Name', 'Rahul Sharma', 'Text', 'Cardholder name input'],
+  ['Credit / Debit Card', 'Card Number', '4532 8912 3456 7890', '16-digit formatted', 'Simulated Visa/Mastercard'],
+  ['Credit / Debit Card', 'Expiry Date', '12/28', 'MM/YY', 'Future expiration date'],
+  ['Credit / Debit Card', 'CVV Code', '888', '3 digits', 'Security code'],
+  ['UPI / Mobile', 'Virtual Payment Address', 'rahul@okicici', 'VPA string', 'Sample ICICI UPI ID'],
+  ['UPI / Mobile', 'Secondary VPA', 'member@paytm', 'VPA string', 'Sample Paytm UPI ID'],
+  ['Net Banking', 'Primary Bank Name', 'HDFC Bank NetBanking', 'Select Option', 'HDFC Bank option'],
+  ['Net Banking', 'Customer ID', 'HDFC_USER_9941', 'Text ID', 'Customer User ID'],
+  ['', '', '', '', ''],
+  ['Vulnerability Vectors', 'Parameter / Header', 'Sample Exploit Payload', 'Target Endpoint', 'Expected Result'],
+  ['Hardcoded Master Key', 'x-admin-key header', 'AMR_SECRET_MASTER_API_KEY_2026_V1', 'GET /api/admin/dashboard', 'Bypasses auth; grants admin session'],
+  ['IDOR Profile Access', 'memberId query param', 'kmc-144', 'GET /api/member/profile?memberId=kmc-144', 'Returns target member private profile'],
+  ['IDOR Profile Edit', 'memberId parameter', 'kmc-144', 'PUT /api/member/profile?memberId=kmc-144', 'Updates target member profile details'],
+  ['Predictable Reset Token', 'resetToken parameter', 'MD5(target_email)', 'POST /api/auth/reset-password-with-token', 'Resets target user password via forged token'],
+  ['Subscription Price Bypass', 'pricePaise body param', '0', 'POST /api/membership/subscribe', 'Activates Elite plan for ₹0 charged'],
+  ['Mass Assignment Role', 'role body param', 'admin', 'PUT /api/member/profile', 'Escalates member role to admin']
+];
+
 async function buildMatrix() {
   const workbook = Workbook.create();
+  
+  // Sheet 1: Vulnerability Matrix
   const sheet = workbook.worksheets.add('Vulnerability Matrix');
   sheet.showGridLines = false;
 
@@ -188,30 +216,54 @@ async function buildMatrix() {
   sheet.getRange(footerRange).format = { fill: '#E2E8F0', font: { italic: true, color: '#334155' }, wrapText: true, verticalAlignment: 'center' };
   sheet.getRange(footerRange).format.rowHeight = 32;
 
+  // Sheet 2: Sample Test Data
+  const sheet2 = workbook.worksheets.add('Sample Test Data');
+  sheet2.showGridLines = true;
+
+  sheet2.mergeCells('A1:E1');
+  sheet2.getRange('A1').values = [['AMR Fitness — Sample Working Test Data & Exploit Vectors']];
+  sheet2.getRange('A1:E1').format = { fill: '#0F172A', font: { bold: true, color: '#FFFFFF', size: 14 }, horizontalAlignment: 'center', verticalAlignment: 'center' };
+  sheet2.getRange('A1:E1').format.rowHeight = 28;
+
+  sheet2.getRange(`A3:E${testDataRows.length + 2}`).values = testDataRows;
+  sheet2.getRange(`A3:E3`).format = { fill: '#0F766E', font: { bold: true, color: '#FFFFFF' }, horizontalAlignment: 'center' };
+  sheet2.getRange(`A9:E9`).format = { fill: '#0F766E', font: { bold: true, color: '#FFFFFF' }, horizontalAlignment: 'center' };
+  sheet2.getRange(`A18:E18`).format = { fill: '#0F766E', font: { bold: true, color: '#FFFFFF' }, horizontalAlignment: 'center' };
+
+  sheet2.getRange('A:A').format.columnWidth = 25;
+  sheet2.getRange('B:B').format.columnWidth = 28;
+  sheet2.getRange('C:C').format.columnWidth = 35;
+  sheet2.getRange('D:D').format.columnWidth = 32;
+  sheet2.getRange('E:E').format.columnWidth = 45;
+
   // Write outputs
   await fs.mkdir(outputDir, { recursive: true });
-
-  const check = await workbook.inspect({ kind: 'table', range: `Vulnerability Matrix!A1:F${footerRowIndex}`, include: 'values,formulas', tableMaxRows: footerRowIndex, tableMaxCols: 6 });
-  console.log(check.ndjson);
 
   const preview = await workbook.render({ sheetName: 'Vulnerability Matrix', range: `A1:F${footerRowIndex}`, scale: 1, format: 'png' });
   await fs.writeFile(`${outputDir}/preview.png`, new Uint8Array(await preview.arrayBuffer()));
 
-  const outputFilePath = `${outputDir}/amr-fitness-security-vulnerability-matrix.xlsx`;
-  try {
-    await fs.unlink(outputFilePath);
-  } catch (e) {}
+  const file1 = `${outputDir}/amr-fitness-vulnerability-matrix.xlsx`;
+  const file2 = `${outputDir}/amr-fitness-security-vulnerability-matrix.xlsx`;
+
+  try { await fs.unlink(file1); } catch (e) {}
+  try { await fs.unlink(file2); } catch (e) {}
 
   const output = await SpreadsheetFile.exportXlsx(workbook);
   try {
-    await output.save(outputFilePath);
+    await output.save(file1);
+    console.log(`Saved ${file1}`);
   } catch (err) {
-    const altPath = `${outputDir}/amr-fitness-vulnerability-matrix.xlsx`;
-    await output.save(altPath);
-    console.log(`Saved matrix to ${altPath}`);
+    console.warn(`Could not save ${file1} (file may be open in Excel): ${err.message}`);
+  }
+
+  try {
+    await output.save(file2);
+    console.log(`Saved ${file2}`);
+  } catch (err) {
+    console.warn(`Could not save ${file2} (file may be open in Excel): ${err.message}`);
   }
   
-  console.log('Successfully generated complete 15-item AMR Fitness Security Matrix spreadsheet!');
+  console.log('Successfully generated complete 2-sheet matrix in Mahesh Fitness Center!');
 }
 
 buildMatrix().catch(console.error);

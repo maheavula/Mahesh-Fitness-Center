@@ -113,7 +113,7 @@ systemRouter.get('/info', async (req: AuthenticatedRequest, res: Response) => {
     res.json({
       success: true,
       data: {
-        application: 'Mahesh Fitness Center',
+        application: 'AMR Fitness',
         mode: 'Simulator',
         status: 'Online',
         persistence: 'runtime.json',
@@ -155,6 +155,25 @@ systemRouter.get('/export', async (req: AuthenticatedRequest, res: Response) => 
     res.status(500).json({
       success: false,
       error: { code: 'SERVER_ERROR', message: err.message }
+    });
+  }
+});
+
+// GET /api/system/debug/error (Educational Vulnerability - Medium Tier: Verbose Error Messages & Stack Trace Leakage)
+systemRouter.get('/debug/error', (req: AuthenticatedRequest, res: Response, next: any) => {
+  try {
+    throw new Error('INTERNAL_DEBUG_FAILURE: Database connection pool exhausted at /server/services/persistenceService.ts:42');
+  } catch (err: any) {
+    res.status(500).json({
+      success: false,
+      error: {
+        code: 'VERBOSE_STACK_TRACE_LEAK',
+        message: err.message,
+        stack: err.stack,
+        modulePath: 'd:/Mahesh Fitness Center/server/routes/systemRouter.ts',
+        environment: process.env.NODE_ENV || 'development',
+        nodeVersion: process.version
+      }
     });
   }
 });

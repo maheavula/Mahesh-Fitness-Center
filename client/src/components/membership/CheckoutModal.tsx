@@ -3,17 +3,14 @@ import {
   CreditCard,
   Smartphone,
   Landmark,
-  Zap,
   CheckCircle2,
   Lock,
   ShieldCheck,
-  Receipt,
-  Download,
   ArrowRight,
   AlertCircle
 } from 'lucide-react';
-import { MembershipPlan, Payment } from '../../types/index.js';
-import { formatINR, formatDate } from '../../utils/formatters.js';
+import { MembershipPlan } from '../../types/index.js';
+import { formatINR } from '../../utils/formatters.js';
 import { NeuModal, NeuButton, NeuInput, NeuSelect, NeuBadge, NeuTabs } from '../neumorphic/index.js';
 
 export interface CheckoutModalProps {
@@ -31,22 +28,22 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
   isRenewal = false,
   onSuccess
 }) => {
-  const [activeTab, setActiveTab] = useState<'card' | 'upi' | 'netbanking' | 'demo'>('card');
+  const [activeTab, setActiveTab] = useState<'card' | 'upi' | 'netbanking'>('card');
   const [step, setStep] = useState<'details' | 'processing' | 'receipt'>('details');
 
-  // Card Form State
-  const [cardName, setCardName] = useState('Mahesh Kumar');
-  const [cardNumber, setCardNumber] = useState('4532 8912 3456 7890');
-  const [cardExpiry, setCardExpiry] = useState('12/28');
-  const [cardCvv, setCardCvv] = useState('888');
+  // Card Form State (Empty / No prefilled details)
+  const [cardName, setCardName] = useState('');
+  const [cardNumber, setCardNumber] = useState('');
+  const [cardExpiry, setCardExpiry] = useState('');
+  const [cardCvv, setCardCvv] = useState('');
 
-  // UPI Form State
-  const [upiId, setUpiId] = useState('mahesh@okicici');
+  // UPI Form State (Empty / No prefilled details)
+  const [upiId, setUpiId] = useState('');
   const [selectedUpiApp, setSelectedUpiApp] = useState('gpay');
 
-  // NetBanking State
+  // NetBanking State (Empty / No prefilled details)
   const [selectedBank, setSelectedBank] = useState('HDFC');
-  const [netBankingUserId, setNetBankingUserId] = useState('MAHESH_NET101');
+  const [netBankingUserId, setNetBankingUserId] = useState('');
 
   // Completed Payment Record
   const [receiptData, setReceiptData] = useState<{
@@ -59,7 +56,6 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
   if (!isOpen || !plan) return null;
 
   const handleCardNumberChange = (val: string) => {
-    // Format into 4-digit blocks
     const cleaned = val.replace(/\D/g, '').substring(0, 16);
     const formatted = cleaned.match(/.{1,4}/g)?.join(' ') || cleaned;
     setCardNumber(formatted);
@@ -77,12 +73,11 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
   const handleProcessCheckout = async (methodName: string) => {
     setStep('processing');
 
-    // Simulate realistic payment gateway processing delay
     setTimeout(async () => {
       try {
         await onSuccess(methodName);
         const payId = 'PAY-' + Math.floor(10000 + Math.random() * 90000);
-        const txnRef = 'TXN_MFC_' + Math.floor(10000000 + Math.random() * 90000000);
+        const txnRef = 'TXN_AMR_' + Math.floor(10000000 + Math.random() * 90000000);
         setReceiptData({
           paymentId: payId,
           txnRef,
@@ -93,12 +88,18 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
       } catch (err) {
         setStep('details');
       }
-    }, 1800);
+    }, 1500);
   };
 
   const handleCloseAndReset = () => {
     setStep('details');
     setReceiptData(null);
+    setCardName('');
+    setCardNumber('');
+    setCardExpiry('');
+    setCardCvv('');
+    setUpiId('');
+    setNetBankingUserId('');
     onClose();
   };
 
@@ -121,8 +122,8 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
             <ShieldCheck className="w-8 h-8" />
           </div>
           <div className="space-y-1">
-            <h4 className="text-lg font-bold text-gray-900">Processing Simulated Transaction</h4>
-            <p className="text-xs text-gray-500">Securing connection with Mahesh Fitness Payment Gateway...</p>
+            <h4 className="text-lg font-bold text-gray-900">Processing Payment Transaction</h4>
+            <p className="text-xs text-gray-500">Connecting with Payment Gateway...</p>
           </div>
           <NeuBadge variant="emerald" size="sm">256-Bit SSL Encrypted</NeuBadge>
         </div>
@@ -135,7 +136,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
             <CheckCircle2 className="w-8 h-8 text-emerald-600 flex-shrink-0" />
             <div>
               <h4 className="text-sm font-bold text-emerald-950">Membership Activated Successfully!</h4>
-              <p className="text-xs text-emerald-700">Your membership status has been updated in runtime.json.</p>
+              <p className="text-xs text-emerald-700">Your membership status has been updated.</p>
             </div>
           </div>
 
@@ -182,7 +183,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
             </div>
             <div className="text-right">
               <span className="text-xl font-black text-gray-900 block">{formatINR(plan.pricePaise)}</span>
-              <span className="text-[10px] text-gray-400 font-semibold">Incl. All Simulated Taxes</span>
+              <span className="text-[10px] text-gray-400 font-semibold">Incl. Taxes</span>
             </div>
           </div>
 
@@ -192,9 +193,8 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
             <NeuTabs
               tabs={[
                 { id: 'card', label: 'Card', icon: <CreditCard className="w-4 h-4" /> },
-                { id: 'upi', label: 'UPI / Instant', icon: <Smartphone className="w-4 h-4" /> },
+                { id: 'upi', label: 'UPI / Mobile', icon: <Smartphone className="w-4 h-4" /> },
                 { id: 'netbanking', label: 'Net Banking', icon: <Landmark className="w-4 h-4" /> },
-                { id: 'demo', label: 'Instant Demo', icon: <Zap className="w-4 h-4" /> },
               ]}
               activeTab={activeTab}
               onChange={id => setActiveTab(id as any)}
@@ -208,7 +208,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                 label="Cardholder Name"
                 value={cardName}
                 onChange={e => setCardName(e.target.value)}
-                placeholder="Mahesh Kumar"
+                placeholder="Name on card"
                 required
               />
 
@@ -226,7 +226,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                   label="Expiry (MM/YY)"
                   value={cardExpiry}
                   onChange={e => handleExpiryChange(e.target.value)}
-                  placeholder="12/28"
+                  placeholder="MM/YY"
                   required
                 />
                 <NeuInput
@@ -255,7 +255,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                 label="Enter Virtual Payment Address (UPI ID)"
                 value={upiId}
                 onChange={e => setUpiId(e.target.value)}
-                placeholder="username@okicici"
+                placeholder="username@bank"
                 icon={<Smartphone className="w-4 h-4" />}
                 required
               />
@@ -295,14 +295,14 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
           {activeTab === 'netbanking' && (
             <form onSubmit={e => { e.preventDefault(); handleProcessCheckout('simulated_netbanking'); }} className="space-y-4 animate-fade-in">
               <NeuSelect
-                label="Select Primary Bank"
+                label="Select Bank"
                 value={selectedBank}
                 onChange={e => setSelectedBank(e.target.value)}
                 options={[
-                  { label: 'HDFC Bank - NetBanking', value: 'HDFC' },
+                  { label: 'HDFC Bank NetBanking', value: 'HDFC' },
                   { label: 'State Bank of India (SBI)', value: 'SBI' },
-                  { label: 'ICICI Bank Unlimited', value: 'ICICI' },
-                  { label: 'Axis Bank Personal', value: 'AXIS' },
+                  { label: 'ICICI Bank', value: 'ICICI' },
+                  { label: 'Axis Bank', value: 'AXIS' },
                   { label: 'Kotak Mahindra Bank', value: 'KOTAK' },
                 ]}
               />
@@ -311,7 +311,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                 label="Customer User ID / Account ID"
                 value={netBankingUserId}
                 onChange={e => setNetBankingUserId(e.target.value)}
-                placeholder="CUSTOMER_1001"
+                placeholder="User ID"
                 required
               />
 
@@ -322,33 +322,6 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
               </div>
             </form>
           )}
-
-          {/* TAB 4: INSTANT DEMO */}
-          {activeTab === 'demo' && (
-            <div className="space-y-4 animate-fade-in">
-              <div className="p-4 neu-pressed rounded-2xl text-xs space-y-2">
-                <div className="flex items-center gap-2 text-emerald-700 font-bold">
-                  <Zap className="w-4 h-4" /> Instant Demo Simulation Mode
-                </div>
-                <p className="text-gray-600">
-                  Bypasses manual field entry to quickly test the end-to-end membership activation pipeline.
-                </p>
-              </div>
-
-              <NeuButton
-                variant="primary"
-                className="w-full"
-                onClick={() => handleProcessCheckout('demo_instant')}
-              >
-                Instant Checkout ({formatINR(plan.pricePaise)}) <Zap className="w-4 h-4" />
-              </NeuButton>
-            </div>
-          )}
-
-          <div className="p-3 bg-amber-50 border border-amber-200/60 rounded-xl text-[11px] text-amber-800 flex items-start gap-2">
-            <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
-            <span>Simulated Environment: No real money will be charged. Payment states persist directly to <code>runtime.json</code>.</span>
-          </div>
         </div>
       )}
     </NeuModal>

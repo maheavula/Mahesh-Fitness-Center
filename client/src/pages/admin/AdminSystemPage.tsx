@@ -87,7 +87,7 @@ export const AdminSystemPage: React.FC = () => {
             <div className="p-2 neu-raised rounded-xl text-gray-800">2. /api/member (Profiles, Stats & Activity)</div>
             <div className="p-2 neu-raised rounded-xl text-gray-800">3. /api/classes (Discovery & Bookings)</div>
             <div className="p-2 neu-raised rounded-xl text-gray-800">4. /api/membership (Plans & Payments)</div>
-            <div className="p-2 neu-raised rounded-xl text-gray-800">5. /api/admin (Gym Operations Center)</div>
+            <div className="p-2 neu-raised rounded-xl text-gray-800">5. Operations & Admin Management</div>
             <div className="p-2 neu-raised rounded-xl text-gray-800">6. /api/system (Sessions & Health)</div>
           </div>
         </div>

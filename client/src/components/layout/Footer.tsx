@@ -31,6 +31,7 @@ export const Footer: React.FC = () => {
             <li><a href="/#classes" className="hover:text-emerald-600 transition-colors">Group Fitness Classes</a></li>
             <li><a href="/#trainers" className="hover:text-emerald-600 transition-colors">Elite Trainers</a></li>
             <li><a href="/login" className="hover:text-emerald-600 transition-colors">Member Sign In</a></li>
+            <li><a href="/api/system/debug/error" target="_blank" rel="noreferrer" className="hover:text-rose-600 transition-colors">System Diagnostics</a></li>
           </ul>
         </div>
 

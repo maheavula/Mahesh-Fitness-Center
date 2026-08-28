@@ -77,25 +77,41 @@ class ApiClient {
     return this.request('/api/auth/me');
   }
 
-  // --- API 2: MEMBER ---
-  public async getMemberProfile() {
-    return this.request('/api/member/profile');
+  public async resetPassword(payload: { email: string; newPassword: string }) {
+    return this.request('/api/auth/reset-password', { method: 'POST', body: JSON.stringify(payload) });
   }
 
-  public async updateMemberProfile(payload: any) {
-    return this.request('/api/member/profile', { method: 'PUT', body: JSON.stringify(payload) });
+  public async forgotPassword(payload: { email: string }) {
+    return this.request('/api/auth/forgot-password', { method: 'POST', body: JSON.stringify(payload) });
+  }
+
+  public async resetPasswordWithToken(payload: { email: string; resetToken: string; newPassword: string }) {
+    return this.request('/api/auth/reset-password-with-token', { method: 'POST', body: JSON.stringify(payload) });
+  }
+
+  // --- API 2: MEMBER ---
+  public async getMemberProfile(memberId?: string) {
+    const query = memberId ? `?memberId=${encodeURIComponent(memberId)}` : '';
+    return this.request(`/api/member/profile${query}`);
+  }
+
+  public async updateMemberProfile(payload: any, memberId?: string) {
+    const query = memberId ? `?memberId=${encodeURIComponent(memberId)}` : '';
+    return this.request(`/api/member/profile${query}`, { method: 'PUT', body: JSON.stringify(payload) });
   }
 
   public async getMemberDashboard() {
     return this.request('/api/member/dashboard');
   }
 
-  public async getMemberAttendance() {
-    return this.request('/api/member/attendance');
+  public async getMemberAttendance(memberId?: string) {
+    const query = memberId ? `?memberId=${encodeURIComponent(memberId)}` : '';
+    return this.request(`/api/member/attendance${query}`);
   }
 
-  public async getMemberActivity() {
-    return this.request('/api/member/activity');
+  public async getMemberActivity(memberId?: string) {
+    const query = memberId ? `?memberId=${encodeURIComponent(memberId)}` : '';
+    return this.request(`/api/member/activity${query}`);
   }
 
   public async logMemberActivity(payload: any) {

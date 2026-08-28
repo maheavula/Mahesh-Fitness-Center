@@ -65,7 +65,7 @@ export async function ensureSeededData(): Promise<void> {
   };
 
   const demoMemberProfile: MemberProfile = {
-    id: 'MEM-10001',
+    id: 'kmc-143',
     userId: 'USR-10001',
     dateOfBirth: '1998-05-15',
     gender: 'Male',
@@ -96,7 +96,7 @@ export async function ensureSeededData(): Promise<void> {
 
   memberNames.forEach((m, idx) => {
     const userId = `USR-1000${idx + 2}`;
-    const memId = `MEM-1000${idx + 2}`;
+    const memId = `kmc-${144 + idx}`;
     extraUsers.push({
       id: userId,
       name: m.name,

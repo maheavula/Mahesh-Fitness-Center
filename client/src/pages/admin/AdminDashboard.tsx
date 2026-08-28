@@ -14,14 +14,17 @@ import {
 } from 'lucide-react';
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
 import { apiClient } from '../../services/apiClient.js';
+import { useAuth } from '../../context/AuthContext.js';
 import { formatINR, formatDate } from '../../utils/formatters.js';
 import { NeuCard, NeuButton, NeuBadge, NeuStatCard } from '../../components/neumorphic/index.js';
 
 export const AdminDashboard: React.FC = () => {
+  const { user } = useAuth();
   const [dashboardData, setDashboardData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!user || user.role !== 'admin') return;
     async function loadAdminDashboard() {
       try {
         const res = await apiClient.getAdminDashboard();
@@ -35,7 +38,7 @@ export const AdminDashboard: React.FC = () => {
       }
     }
     loadAdminDashboard();
-  }, []);
+  }, [user]);
 
   if (loading) {
     return (

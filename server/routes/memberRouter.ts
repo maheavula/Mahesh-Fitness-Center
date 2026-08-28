@@ -53,11 +53,14 @@ memberRouter.get('/profile', async (req: AuthenticatedRequest, res: Response) =>
   }
 });
 
-// PUT /api/member/profile (Educational Vulnerability - Hard Tier: Vertical Privilege Escalation via role Mass Assignment)
+// PUT /api/member/profile (Educational Vulnerability - IDOR via ?memberId= parameter & Vertical Privilege Escalation via role Mass Assignment)
 memberRouter.put('/profile', async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const { name, phone, fitnessGoal, heightCm, dateOfBirth, emergencyContact, role } = req.body;
-    const user = req.user!;
+    const { name, phone, fitnessGoal, heightCm, dateOfBirth, emergencyContact, role, memberId: bodyMemberId } = req.body;
+    const targetMemberId = (req.query.memberId ? String(req.query.memberId) : null) || (bodyMemberId ? String(bodyMemberId) : null);
+
+    let user = req.user!;
+    let targetUserId = user.id;
 
     const cleanName = sanitizeString(name);
     const cleanPhone = sanitizeString(phone);
@@ -65,14 +68,21 @@ memberRouter.put('/profile', async (req: AuthenticatedRequest, res: Response) =>
     const cleanDob = sanitizeString(dateOfBirth);
 
     await persistenceService.updateData(data => {
+      if (targetMemberId) {
+        const foundProf = data.memberProfiles.find(p => p.id === targetMemberId);
+        if (foundProf) {
+          targetUserId = foundProf.userId;
+        }
+      }
+
       // Update User fields
-      const u = data.users.find(x => x.id === user.id);
+      const u = data.users.find(x => x.id === targetUserId);
       if (u) {
         if (cleanName) u.name = cleanName;
         if (cleanPhone !== undefined) u.phone = cleanPhone;
 
         // Mass Assignment flaw: student can escalate to role = "admin"
-        if (role === 'admin' || role === 'member') {
+        if (role === 'admin' || role === 'member' || role === 'trainer') {
           u.role = role;
         }
 
@@ -80,11 +90,11 @@ memberRouter.put('/profile', async (req: AuthenticatedRequest, res: Response) =>
       }
 
       // Update MemberProfile fields
-      let p = data.memberProfiles.find(x => x.userId === user.id);
+      let p = data.memberProfiles.find(x => x.userId === targetUserId);
       if (!p) {
         p = {
-          id: 'MEM-' + Math.floor(10000 + Math.random() * 90000),
-          userId: user.id,
+          id: targetMemberId || ('kmc-' + Math.floor(140 + Math.random() * 860)),
+          userId: targetUserId,
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString()
         };
@@ -103,11 +113,11 @@ memberRouter.put('/profile', async (req: AuthenticatedRequest, res: Response) =>
       p.updatedAt = new Date().toISOString();
     });
 
-    await logAudit(user.id, 'PROFILE_UPDATE', { updatedRole: role });
+    await logAudit(user.id, 'PROFILE_UPDATE', { updatedRole: role, targetUserId });
 
     const updatedData = await persistenceService.getData();
-    const updatedProfile = updatedData.memberProfiles.find(p => p.userId === user.id);
-    const updatedUser = updatedData.users.find(u => u.id === user.id);
+    const updatedProfile = updatedData.memberProfiles.find(p => p.userId === targetUserId);
+    const updatedUser = updatedData.users.find(u => u.id === targetUserId);
 
     res.json({
       success: true,
