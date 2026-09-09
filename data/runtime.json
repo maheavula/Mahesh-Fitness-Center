@@ -5,119 +5,119 @@
       "name": "AMR Fitness Lead Administrator",
       "email": "admin@amrfitness.local",
       "phone": "+919876543210",
-      "passwordHash": "$2a$10$Hi6FC74WdqtAD7njQTbGo.YkxdXEdwrbol5x27c2XMVKkkhEt0d06",
+      "passwordHash": "$2a$10$ntxLCvmUSgs3XMkzVa8p1O2XXPuAP/B5QVtkj6ou.kC3EBAOxy1Ci",
       "md5Hash": "e10adc3949ba59abbe56e057f20f883e",
       "role": "admin",
       "status": "active",
-      "createdAt": "2026-08-26T04:08:18.344Z",
-      "updatedAt": "2026-08-26T04:08:18.344Z",
-      "lastLoginAt": "2026-08-28T09:22:53.737Z"
+      "createdAt": "2026-09-09T06:42:26.456Z",
+      "updatedAt": "2026-09-09T06:42:26.456Z",
+      "lastLoginAt": "2026-09-09T06:42:26.456Z"
     },
     {
       "id": "USR-10001",
       "name": "AMR Student Member",
       "email": "member@amrfitness.local",
       "phone": "+919123456789",
-      "passwordHash": "$2a$10$odjmg36PwR0WfJAOzNi.HuYeWDK1CuiDWNM4WCG.ISLKWZkeH7A8m",
-      "md5Hash": "600827f4769e061cf1d3bcc0fac5739f",
+      "passwordHash": "$2a$10$PCaeSQA7gXLwPIx6vZ79nOoythPP3rQ1.iIN6NfSQ/f8o5HFCcq/e",
+      "md5Hash": "e10adc3949ba59abbe56e057f20f883e",
       "role": "member",
       "status": "active",
       "createdAt": "2026-01-15T08:00:00.000Z",
-      "updatedAt": "2026-08-28T09:15:13.439Z",
-      "lastLoginAt": "2026-08-28T09:29:53.694Z"
+      "updatedAt": "2026-09-09T06:42:26.456Z",
+      "lastLoginAt": "2026-09-09T06:42:26.456Z"
     },
     {
       "id": "USR-10002",
       "name": "Priya Sharma",
       "email": "priya.s@example.com",
       "phone": "+919876500001",
-      "passwordHash": "$2a$10$OCx1bWwZTKAO4pFtGyKWDeODZubupXK29U3BGe4CM2sbZ85H23sGG",
+      "passwordHash": "$2a$10$3A08Ibgv8h5vJ3ZaE/HocOT4aDiZsneKUTroIiZjijuHt5QWD61q6",
       "role": "member",
       "status": "active",
       "createdAt": "2026-02-01T10:00:00.000Z",
-      "updatedAt": "2026-08-26T04:08:18.344Z"
+      "updatedAt": "2026-09-09T06:42:26.456Z"
     },
     {
       "id": "USR-10003",
       "name": "Ananya Verma",
       "email": "ananya.v@example.com",
       "phone": "+919876500002",
-      "passwordHash": "$2a$10$OCx1bWwZTKAO4pFtGyKWDeODZubupXK29U3BGe4CM2sbZ85H23sGG",
+      "passwordHash": "$2a$10$3A08Ibgv8h5vJ3ZaE/HocOT4aDiZsneKUTroIiZjijuHt5QWD61q6",
       "role": "member",
       "status": "active",
       "createdAt": "2026-02-01T10:00:00.000Z",
-      "updatedAt": "2026-08-26T04:08:18.344Z"
+      "updatedAt": "2026-09-09T06:42:26.456Z"
     },
     {
       "id": "USR-10004",
       "name": "Vikram Singh",
       "email": "vikram.s@example.com",
       "phone": "+919876500003",
-      "passwordHash": "$2a$10$OCx1bWwZTKAO4pFtGyKWDeODZubupXK29U3BGe4CM2sbZ85H23sGG",
+      "passwordHash": "$2a$10$3A08Ibgv8h5vJ3ZaE/HocOT4aDiZsneKUTroIiZjijuHt5QWD61q6",
       "role": "member",
       "status": "active",
       "createdAt": "2026-02-01T10:00:00.000Z",
-      "updatedAt": "2026-08-26T04:08:18.344Z"
+      "updatedAt": "2026-09-09T06:42:26.456Z"
     },
     {
       "id": "USR-10005",
       "name": "Rahul Mehta",
       "email": "rahul.m@example.com",
       "phone": "+919876500004",
-      "passwordHash": "$2a$10$OCx1bWwZTKAO4pFtGyKWDeODZubupXK29U3BGe4CM2sbZ85H23sGG",
+      "passwordHash": "$2a$10$3A08Ibgv8h5vJ3ZaE/HocOT4aDiZsneKUTroIiZjijuHt5QWD61q6",
       "role": "member",
       "status": "active",
       "createdAt": "2026-02-01T10:00:00.000Z",
-      "updatedAt": "2026-08-26T04:08:18.344Z"
+      "updatedAt": "2026-09-09T06:42:26.456Z"
     },
     {
       "id": "USR-10006",
       "name": "Sneha Patel",
       "email": "sneha.p@example.com",
       "phone": "+919876500005",
-      "passwordHash": "$2a$10$OCx1bWwZTKAO4pFtGyKWDeODZubupXK29U3BGe4CM2sbZ85H23sGG",
+      "passwordHash": "$2a$10$3A08Ibgv8h5vJ3ZaE/HocOT4aDiZsneKUTroIiZjijuHt5QWD61q6",
       "role": "member",
       "status": "active",
       "createdAt": "2026-02-01T10:00:00.000Z",
-      "updatedAt": "2026-08-26T04:08:18.344Z"
+      "updatedAt": "2026-09-09T06:42:26.456Z"
     },
     {
       "id": "USR-10007",
       "name": "Rohan Gupta",
       "email": "rohan.g@example.com",
       "phone": "+919876500006",
-      "passwordHash": "$2a$10$OCx1bWwZTKAO4pFtGyKWDeODZubupXK29U3BGe4CM2sbZ85H23sGG",
+      "passwordHash": "$2a$10$3A08Ibgv8h5vJ3ZaE/HocOT4aDiZsneKUTroIiZjijuHt5QWD61q6",
       "role": "member",
       "status": "active",
       "createdAt": "2026-02-01T10:00:00.000Z",
-      "updatedAt": "2026-08-26T04:08:18.344Z"
+      "updatedAt": "2026-09-09T06:42:26.456Z"
     },
     {
       "id": "USR-10008",
       "name": "Kavita Reddy",
       "email": "kavita.r@example.com",
       "phone": "+919876500007",
-      "passwordHash": "$2a$10$OCx1bWwZTKAO4pFtGyKWDeODZubupXK29U3BGe4CM2sbZ85H23sGG",
+      "passwordHash": "$2a$10$3A08Ibgv8h5vJ3ZaE/HocOT4aDiZsneKUTroIiZjijuHt5QWD61q6",
       "role": "member",
       "status": "active",
       "createdAt": "2026-02-01T10:00:00.000Z",
-      "updatedAt": "2026-08-26T04:08:18.344Z"
+      "updatedAt": "2026-09-09T06:42:26.456Z"
     },
     {
       "id": "USR-10009",
       "name": "Arjun Nambiar",
       "email": "arjun.n@example.com",
       "phone": "+919876500008",
-      "passwordHash": "$2a$10$OCx1bWwZTKAO4pFtGyKWDeODZubupXK29U3BGe4CM2sbZ85H23sGG",
+      "passwordHash": "$2a$10$3A08Ibgv8h5vJ3ZaE/HocOT4aDiZsneKUTroIiZjijuHt5QWD61q6",
       "role": "member",
       "status": "active",
       "createdAt": "2026-02-01T10:00:00.000Z",
-      "updatedAt": "2026-08-26T04:08:18.344Z"
+      "updatedAt": "2026-09-09T06:42:26.456Z"
     }
   ],
   "memberProfiles": [
     {
-      "id": "MEM-10001",
+      "id": "kmc-143",
       "userId": "USR-10001",
       "dateOfBirth": "1998-05-15",
       "gender": "Male",
@@ -128,10 +128,10 @@
         "phone": "+919888877777"
       },
       "createdAt": "2026-01-15T08:00:00.000Z",
-      "updatedAt": "2026-08-26T04:08:18.344Z"
+      "updatedAt": "2026-09-09T06:42:26.456Z"
     },
     {
-      "id": "MEM-10002",
+      "id": "kmc-144",
       "userId": "USR-10002",
       "dateOfBirth": "1995-08-20",
       "gender": "Female",
@@ -142,10 +142,10 @@
         "phone": "+919000011111"
       },
       "createdAt": "2026-02-01T10:00:00.000Z",
-      "updatedAt": "2026-08-26T04:08:18.344Z"
+      "updatedAt": "2026-09-09T06:42:26.456Z"
     },
     {
-      "id": "MEM-10003",
+      "id": "kmc-145",
       "userId": "USR-10003",
       "dateOfBirth": "1995-08-20",
       "gender": "Male",
@@ -156,10 +156,10 @@
         "phone": "+919000011111"
       },
       "createdAt": "2026-02-01T10:00:00.000Z",
-      "updatedAt": "2026-08-26T04:08:18.344Z"
+      "updatedAt": "2026-09-09T06:42:26.456Z"
     },
     {
-      "id": "MEM-10004",
+      "id": "kmc-146",
       "userId": "USR-10004",
       "dateOfBirth": "1995-08-20",
       "gender": "Female",
@@ -170,10 +170,10 @@
         "phone": "+919000011111"
       },
       "createdAt": "2026-02-01T10:00:00.000Z",
-      "updatedAt": "2026-08-26T04:08:18.344Z"
+      "updatedAt": "2026-09-09T06:42:26.456Z"
     },
     {
-      "id": "MEM-10005",
+      "id": "kmc-147",
       "userId": "USR-10005",
       "dateOfBirth": "1995-08-20",
       "gender": "Male",
@@ -184,10 +184,10 @@
         "phone": "+919000011111"
       },
       "createdAt": "2026-02-01T10:00:00.000Z",
-      "updatedAt": "2026-08-26T04:08:18.344Z"
+      "updatedAt": "2026-09-09T06:42:26.456Z"
     },
     {
-      "id": "MEM-10006",
+      "id": "kmc-148",
       "userId": "USR-10006",
       "dateOfBirth": "1995-08-20",
       "gender": "Female",
@@ -198,10 +198,10 @@
         "phone": "+919000011111"
       },
       "createdAt": "2026-02-01T10:00:00.000Z",
-      "updatedAt": "2026-08-26T04:08:18.344Z"
+      "updatedAt": "2026-09-09T06:42:26.456Z"
     },
     {
-      "id": "MEM-10007",
+      "id": "kmc-149",
       "userId": "USR-10007",
       "dateOfBirth": "1995-08-20",
       "gender": "Male",
@@ -212,10 +212,10 @@
         "phone": "+919000011111"
       },
       "createdAt": "2026-02-01T10:00:00.000Z",
-      "updatedAt": "2026-08-26T04:08:18.344Z"
+      "updatedAt": "2026-09-09T06:42:26.456Z"
     },
     {
-      "id": "MEM-10008",
+      "id": "kmc-150",
       "userId": "USR-10008",
       "dateOfBirth": "1995-08-20",
       "gender": "Female",
@@ -226,10 +226,10 @@
         "phone": "+919000011111"
       },
       "createdAt": "2026-02-01T10:00:00.000Z",
-      "updatedAt": "2026-08-26T04:08:18.344Z"
+      "updatedAt": "2026-09-09T06:42:26.456Z"
     },
     {
-      "id": "MEM-10009",
+      "id": "kmc-151",
       "userId": "USR-10009",
       "dateOfBirth": "1995-08-20",
       "gender": "Male",
@@ -240,7 +240,7 @@
         "phone": "+919000011111"
       },
       "createdAt": "2026-02-01T10:00:00.000Z",
-      "updatedAt": "2026-08-26T04:08:18.344Z"
+      "updatedAt": "2026-09-09T06:42:26.456Z"
     }
   ],
   "membershipPlans": [
@@ -295,157 +295,52 @@
   ],
   "memberships": [
     {
-      "id": "SUB-96324",
-      "memberId": "MEM-10001",
-      "planId": "PLAN-10002",
-      "status": "active",
-      "startDate": "2026-08-28T06:55:44.548Z",
-      "endDate": "2026-11-28T06:55:44.548Z",
-      "autoRenew": false,
-      "createdAt": "2026-08-28T06:55:44.548Z",
-      "plan": {
-        "id": "PLAN-10002",
-        "name": "Premium",
-        "description": "Our most popular plan with complete access to group classes and fitness assessments.",
-        "durationMonths": 3,
-        "pricePaise": 749900,
-        "features": [
-          "Full Gym Access",
-          "Unlimited Group Classes",
-          "Private Locker Access",
-          "Quarterly Body Assessment",
-          "Sauna Access"
-        ],
-        "status": "active",
-        "createdAt": "2026-01-01T00:00:00.000Z"
-      }
-    },
-    {
-      "id": "SUB-54366",
-      "memberId": "MEM-10001",
-      "planId": "PLAN-10002",
-      "status": "cancelled",
-      "startDate": "2026-08-28T06:54:56.034Z",
-      "endDate": "2026-11-28T06:54:56.034Z",
-      "autoRenew": false,
-      "createdAt": "2026-08-28T06:54:56.034Z",
-      "plan": {
-        "id": "PLAN-10002",
-        "name": "Premium",
-        "description": "Our most popular plan with complete access to group classes and fitness assessments.",
-        "durationMonths": 3,
-        "pricePaise": 749900,
-        "features": [
-          "Full Gym Access",
-          "Unlimited Group Classes",
-          "Private Locker Access",
-          "Quarterly Body Assessment",
-          "Sauna Access"
-        ],
-        "status": "active",
-        "createdAt": "2026-01-01T00:00:00.000Z"
-      }
-    },
-    {
-      "id": "SUB-99948",
-      "memberId": "MEM-10001",
-      "planId": "PLAN-10003",
-      "status": "cancelled",
-      "startDate": "2026-08-28T05:58:30.949Z",
-      "endDate": "2027-08-28T05:58:30.949Z",
-      "autoRenew": false,
-      "createdAt": "2026-08-28T05:58:30.949Z",
-      "plan": {
-        "id": "PLAN-10003",
-        "name": "Elite VIP",
-        "description": "Complete luxury membership including personal trainer sessions and priority bookings.",
-        "durationMonths": 12,
-        "pricePaise": 2499900,
-        "features": [
-          "Unlimited Class Booking",
-          "24/7 Premium Gym Access",
-          "Personal Trainer Credits (4/mo)",
-          "Priority Booking Window",
-          "Complimentary Hydration Bar",
-          "VIP Guest Passes"
-        ],
-        "status": "active",
-        "createdAt": "2026-01-01T00:00:00.000Z"
-      }
-    },
-    {
-      "id": "SUB-10001",
-      "memberId": "MEM-10001",
-      "planId": "PLAN-10002",
-      "status": "cancelled",
-      "startDate": "2026-06-01T00:00:00.000Z",
-      "endDate": "2026-11-01T00:00:00.000Z",
-      "autoRenew": true,
-      "createdAt": "2026-06-01T00:00:00.000Z",
-      "plan": {
-        "id": "PLAN-10002",
-        "name": "Premium",
-        "description": "Our most popular plan with complete access to group classes and fitness assessments.",
-        "durationMonths": 3,
-        "pricePaise": 749900,
-        "features": [
-          "Full Gym Access",
-          "Unlimited Group Classes",
-          "Private Locker Access",
-          "Quarterly Body Assessment",
-          "Sauna Access"
-        ],
-        "status": "active",
-        "createdAt": "2026-01-01T00:00:00.000Z"
-      }
-    },
-    {
       "id": "SUB-10002",
-      "memberId": "MEM-10002",
+      "memberId": "kmc-144",
       "planId": "PLAN-10001",
       "status": "active",
       "startDate": "2026-05-15T00:00:00.000Z",
-      "endDate": "2026-08-15T00:00:00.000Z",
+      "endDate": "2026-11-15T00:00:00.000Z",
       "autoRenew": false,
       "createdAt": "2026-05-15T00:00:00.000Z"
     },
     {
       "id": "SUB-10003",
-      "memberId": "MEM-10003",
+      "memberId": "kmc-145",
       "planId": "PLAN-10002",
       "status": "active",
       "startDate": "2026-05-15T00:00:00.000Z",
-      "endDate": "2026-08-15T00:00:00.000Z",
+      "endDate": "2026-11-15T00:00:00.000Z",
       "autoRenew": false,
       "createdAt": "2026-05-15T00:00:00.000Z"
     },
     {
       "id": "SUB-10004",
-      "memberId": "MEM-10004",
+      "memberId": "kmc-146",
       "planId": "PLAN-10003",
       "status": "active",
       "startDate": "2026-05-15T00:00:00.000Z",
-      "endDate": "2026-08-15T00:00:00.000Z",
+      "endDate": "2026-11-15T00:00:00.000Z",
       "autoRenew": false,
       "createdAt": "2026-05-15T00:00:00.000Z"
     },
     {
       "id": "SUB-10005",
-      "memberId": "MEM-10005",
+      "memberId": "kmc-147",
       "planId": "PLAN-10001",
       "status": "active",
       "startDate": "2026-05-15T00:00:00.000Z",
-      "endDate": "2026-08-15T00:00:00.000Z",
+      "endDate": "2026-11-15T00:00:00.000Z",
       "autoRenew": false,
       "createdAt": "2026-05-15T00:00:00.000Z"
     },
     {
       "id": "SUB-10006",
-      "memberId": "MEM-10006",
+      "memberId": "kmc-148",
       "planId": "PLAN-10002",
       "status": "active",
       "startDate": "2026-05-15T00:00:00.000Z",
-      "endDate": "2026-08-15T00:00:00.000Z",
+      "endDate": "2026-11-15T00:00:00.000Z",
       "autoRenew": false,
       "createdAt": "2026-05-15T00:00:00.000Z"
     }
@@ -456,19 +351,17 @@
       "name": "Arjun Rao",
       "specialization": "Strength & Conditioning",
       "experienceYears": 8,
-      "bio": "Certified CSCS coach with passion for hyper-trophy, Olympic weightlifting, and mobility mechanics.",
+      "bio": "Certified CSCS coach with passion for hypertrophy, barbell mechanics, and mobility integration.",
       "status": "active",
-      "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80",
       "createdAt": "2026-01-01T00:00:00.000Z"
     },
     {
       "id": "TRN-10002",
-      "name": "Dr. Sunita Deshmukh",
+      "name": "Sunita Deshmukh",
       "specialization": "Yoga & Functional Mobility",
       "experienceYears": 12,
       "bio": "Master of Ashtanga Yoga and spinal rehab. Specialized in posture correction and breathwork integration.",
       "status": "active",
-      "avatar": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80",
       "createdAt": "2026-01-01T00:00:00.000Z"
     },
     {
@@ -478,7 +371,6 @@
       "experienceYears": 6,
       "bio": "High-intensity conditioning coach focused on cardiovascular endurance and fat loss program design.",
       "status": "active",
-      "avatar": "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=400&q=80",
       "createdAt": "2026-01-01T00:00:00.000Z"
     },
     {
@@ -486,9 +378,8 @@
       "name": "Maya Lin",
       "specialization": "Pilates Core & Rehabilitation",
       "experienceYears": 9,
-      "bio": "Stott Pilates certified instructor with expertise in core stability, posture alignment, and dynamic balance.",
+      "bio": "Certified instructor with expertise in core stability, posture alignment, and dynamic balance.",
       "status": "active",
-      "avatar": "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=400&q=80",
       "createdAt": "2026-01-01T00:00:00.000Z"
     },
     {
@@ -496,9 +387,8 @@
       "name": "Kabir Fernandes",
       "specialization": "Boxing & Functional Cardio",
       "experienceYears": 10,
-      "bio": "Former state amateur boxer specializing in agility drills, heavy bag combinations, and explosive power.",
+      "bio": "Fitness coach specializing in agility drills, heavy bag combinations, and explosive power.",
       "status": "active",
-      "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80",
       "createdAt": "2026-01-01T00:00:00.000Z"
     }
   ],
@@ -509,8 +399,8 @@
       "description": "Heavy compound barbell work targeting quads, chest, and posterior chain.",
       "category": "Strength",
       "trainerId": "TRN-10001",
-      "date": "2026-08-26",
-      "startTime": "10:00",
+      "date": "2026-09-09",
+      "startTime": "07:00",
       "endTime": "08:00",
       "capacity": 18,
       "bookedCount": 14,
@@ -524,7 +414,7 @@
       "description": "Gentle Vinyasa sequences combined with deep pranayama breathwork.",
       "category": "Yoga",
       "trainerId": "TRN-10002",
-      "date": "2026-08-26",
+      "date": "2026-09-09",
       "startTime": "08:30",
       "endTime": "09:30",
       "capacity": 25,
@@ -539,7 +429,7 @@
       "description": "Interval cardio training on rowers, assault bikes, and kettlebell complexes.",
       "category": "HIIT",
       "trainerId": "TRN-10003",
-      "date": "2026-08-26",
+      "date": "2026-09-09",
       "startTime": "18:00",
       "endTime": "19:00",
       "capacity": 20,
@@ -554,7 +444,7 @@
       "description": "Mat-based Pilates focusing on abdominal hollow holds and oblique stability.",
       "category": "Pilates",
       "trainerId": "TRN-10004",
-      "date": "2026-08-27",
+      "date": "2026-09-10",
       "startTime": "07:30",
       "endTime": "08:30",
       "capacity": 15,
@@ -569,7 +459,7 @@
       "description": "Heavy bag drills, pad work, and footwork drills to boost metabolic conditioning.",
       "category": "Cardio",
       "trainerId": "TRN-10005",
-      "date": "2026-08-27",
+      "date": "2026-09-10",
       "startTime": "17:30",
       "endTime": "18:30",
       "capacity": 16,
@@ -584,7 +474,7 @@
       "description": "Targeted fascia release, hip openers, and shoulder dislocates for joint health.",
       "category": "Mobility",
       "trainerId": "TRN-10002",
-      "date": "2026-08-28",
+      "date": "2026-09-11",
       "startTime": "09:00",
       "endTime": "10:00",
       "capacity": 20,
@@ -599,7 +489,7 @@
       "description": "Swings, clean & presses, and turkish get-ups to build real-world strength.",
       "category": "Functional",
       "trainerId": "TRN-10001",
-      "date": "2026-08-28",
+      "date": "2026-09-11",
       "startTime": "18:30",
       "endTime": "19:30",
       "capacity": 18,
@@ -611,89 +501,19 @@
   ],
   "bookings": [
     {
-      "id": "BOOK-10001",
-      "classId": "CLS-10001",
-      "memberId": "MEM-10001",
-      "status": "confirmed",
-      "bookedAt": "2026-08-24T04:08:18.542Z",
-      "cancelledAt": null
-    },
-    {
-      "id": "BOOK-10002",
-      "classId": "CLS-10003",
-      "memberId": "MEM-10001",
-      "status": "confirmed",
-      "bookedAt": "2026-08-25T04:08:18.542Z",
-      "cancelledAt": null
-    },
-    {
       "id": "BOOK-10003",
       "classId": "CLS-10002",
-      "memberId": "MEM-10002",
+      "memberId": "kmc-144",
       "status": "confirmed",
-      "bookedAt": "2026-08-25T04:08:18.542Z",
+      "bookedAt": "2026-09-08T06:42:26.659Z",
       "cancelledAt": null
     }
   ],
-  "attendance": [
-    {
-      "id": "ATT-10001",
-      "memberId": "MEM-10001",
-      "classId": "CLS-10001",
-      "bookingId": "BOOK-10001",
-      "status": "present",
-      "checkedInAt": "2026-08-26T06:55:00.000Z",
-      "recordedAt": "2026-08-26T07:05:00.000Z"
-    }
-  ],
+  "attendance": [],
   "payments": [
     {
-      "id": "PAY-63244",
-      "memberId": "MEM-10001",
-      "membershipId": "SUB-96324",
-      "amountPaise": 749900,
-      "currency": "INR",
-      "status": "completed",
-      "method": "simulated_card",
-      "description": "Premium Subscription (Charged: ₹7499)",
-      "createdAt": "2026-08-28T06:55:44.548Z"
-    },
-    {
-      "id": "PAY-69362",
-      "memberId": "MEM-10001",
-      "membershipId": "SUB-54366",
-      "amountPaise": 749900,
-      "currency": "INR",
-      "status": "completed",
-      "method": "simulated_card",
-      "description": "Premium Subscription (Charged: ₹7499)",
-      "createdAt": "2026-08-28T06:54:56.034Z"
-    },
-    {
-      "id": "PAY-28631",
-      "memberId": "MEM-10001",
-      "membershipId": "SUB-99948",
-      "amountPaise": 0,
-      "currency": "INR",
-      "status": "completed",
-      "method": "simulated_card",
-      "description": "Elite VIP Subscription (Charged: ₹0)",
-      "createdAt": "2026-08-28T05:58:30.949Z"
-    },
-    {
-      "id": "PAY-10001",
-      "memberId": "MEM-10001",
-      "membershipId": "SUB-10001",
-      "amountPaise": 749900,
-      "currency": "INR",
-      "status": "completed",
-      "method": "simulated_card",
-      "description": "3-Month Premium Membership Subscription",
-      "createdAt": "2026-06-01T00:00:00.000Z"
-    },
-    {
       "id": "PAY-10002",
-      "memberId": "MEM-10002",
+      "memberId": "kmc-144",
       "membershipId": "SUB-10002",
       "amountPaise": 249900,
       "currency": "INR",
@@ -704,7 +524,7 @@
     },
     {
       "id": "PAY-10003",
-      "memberId": "MEM-10003",
+      "memberId": "kmc-145",
       "membershipId": "SUB-10003",
       "amountPaise": 749900,
       "currency": "INR",
@@ -715,7 +535,7 @@
     },
     {
       "id": "PAY-10004",
-      "memberId": "MEM-10004",
+      "memberId": "kmc-146",
       "membershipId": "SUB-10004",
       "amountPaise": 2499900,
       "currency": "INR",
@@ -726,7 +546,7 @@
     },
     {
       "id": "PAY-10005",
-      "memberId": "MEM-10005",
+      "memberId": "kmc-147",
       "membershipId": "SUB-10005",
       "amountPaise": 249900,
       "currency": "INR",
@@ -737,7 +557,7 @@
     },
     {
       "id": "PAY-10006",
-      "memberId": "MEM-10006",
+      "memberId": "kmc-148",
       "membershipId": "SUB-10006",
       "amountPaise": 749900,
       "currency": "INR",
@@ -750,637 +570,107 @@
   "activities": [
     {
       "id": "ACT-10001",
-      "memberId": "MEM-10001",
+      "memberId": "kmc-143",
       "type": "workout",
       "durationMinutes": 60,
       "calories": 450,
-      "date": "2026-08-26",
+      "date": "2026-09-09",
       "source": "simulated"
     },
     {
       "id": "ACT-10002",
-      "memberId": "MEM-10001",
+      "memberId": "kmc-143",
       "type": "cardio",
       "durationMinutes": 45,
       "calories": 380,
-      "date": "2026-08-25",
+      "date": "2026-09-08",
       "source": "simulated"
     },
     {
       "id": "ACT-10003",
-      "memberId": "MEM-10001",
+      "memberId": "kmc-144",
       "type": "strength",
       "durationMinutes": 75,
       "calories": 520,
-      "date": "2026-08-24",
+      "date": "2026-09-07",
       "source": "simulated"
     }
   ],
-  "sessions": [
-    {
-      "id": "MFC_SESS_1c3db95dc3c560751f1c8825f1d517582f57db6bead9f1a5f500915ce9e9660a",
-      "userId": "USR-10001",
-      "createdAt": "2026-08-28T09:29:53.698Z",
-      "expiresAt": "2026-08-29T09:29:53.698Z",
-      "lastActivityAt": "2026-08-28T09:35:03.438Z"
-    }
-  ],
+  "sessions": [],
   "auditLogs": [
-    {
-      "id": "AUDIT-595337",
-      "userId": "USR-10001",
-      "action": "LOGIN",
-      "timestamp": "2026-08-28T09:29:53.702Z",
-      "metadata": {
-        "email": "member@amrfitness.local"
-      }
-    },
-    {
-      "id": "AUDIT-916518",
-      "userId": "USR-10000",
-      "action": "LOGOUT",
-      "timestamp": "2026-08-28T09:28:03.511Z"
-    },
-    {
-      "id": "AUDIT-922277",
-      "userId": "USR-10000",
-      "action": "LOGIN",
-      "timestamp": "2026-08-28T09:22:53.745Z",
-      "metadata": {
-        "email": "admin@amrfitness.local"
-      }
-    },
-    {
-      "id": "AUDIT-323225",
-      "userId": "USR-10001",
-      "action": "LOGOUT",
-      "timestamp": "2026-08-28T09:21:53.716Z"
-    },
-    {
-      "id": "AUDIT-555020",
-      "userId": "USR-10001",
-      "action": "LOGIN",
-      "timestamp": "2026-08-28T09:15:18.840Z",
-      "metadata": {
-        "email": "member@amrfitness.local"
-      }
-    },
-    {
-      "id": "AUDIT-855898",
-      "userId": "USR-10001",
-      "action": "LOGOUT",
-      "timestamp": "2026-08-28T09:14:59.658Z"
-    },
-    {
-      "id": "AUDIT-391224",
-      "userId": "USR-10001",
-      "action": "LOGIN",
-      "timestamp": "2026-08-28T09:08:17.554Z",
-      "metadata": {
-        "email": "member@amrfitness.local"
-      }
-    },
-    {
-      "id": "AUDIT-349421",
-      "userId": "USR-10001",
-      "action": "LOGOUT",
-      "timestamp": "2026-08-28T09:07:21.907Z"
-    },
-    {
-      "id": "AUDIT-252058",
-      "userId": "USR-10001",
-      "action": "LOGIN",
-      "timestamp": "2026-08-28T09:04:29.607Z",
-      "metadata": {
-        "email": "member@amrfitness.local"
-      }
-    },
-    {
-      "id": "AUDIT-874851",
-      "userId": "USR-10001",
-      "action": "LOGOUT",
-      "timestamp": "2026-08-28T08:52:16.661Z"
-    },
-    {
-      "id": "AUDIT-554140",
-      "userId": "USR-10001",
-      "action": "LOGIN",
-      "timestamp": "2026-08-28T08:50:07.102Z",
-      "metadata": {
-        "email": "member@amrfitness.local"
-      }
-    },
-    {
-      "id": "AUDIT-131260",
-      "userId": "USR-10001",
-      "action": "LOGOUT",
-      "timestamp": "2026-08-28T08:43:27.679Z"
-    },
-    {
-      "id": "AUDIT-245157",
-      "userId": "USR-10001",
-      "action": "LOGIN",
-      "timestamp": "2026-08-28T08:43:23.800Z",
-      "metadata": {
-        "email": "member@amrfitness.local"
-      }
-    },
-    {
-      "id": "AUDIT-116482",
-      "userId": "USR-10001",
-      "action": "PROFILE_UPDATE",
-      "timestamp": "2026-08-28T08:43:19.465Z",
-      "metadata": {
-        "action": "INSECURE_PASSWORD_RESET"
-      }
-    },
-    {
-      "id": "AUDIT-710347",
-      "userId": "USR-10001",
-      "action": "LOGOUT",
-      "timestamp": "2026-08-28T07:13:22.510Z"
-    },
-    {
-      "id": "AUDIT-100689",
-      "userId": "USR-10001",
-      "action": "MEMBERSHIP_PURCHASE",
-      "timestamp": "2026-08-28T06:55:44.552Z",
-      "metadata": {
-        "planId": "PLAN-10002",
-        "subscriptionId": "SUB-96324",
-        "paymentId": "PAY-63244",
-        "amountPaise": 749900
-      }
-    },
-    {
-      "id": "AUDIT-673944",
-      "userId": "USR-10001",
-      "action": "MEMBERSHIP_PURCHASE",
-      "timestamp": "2026-08-28T06:54:56.042Z",
-      "metadata": {
-        "planId": "PLAN-10002",
-        "subscriptionId": "SUB-54366",
-        "paymentId": "PAY-69362",
-        "amountPaise": 749900
-      }
-    },
-    {
-      "id": "AUDIT-416269",
-      "userId": "USR-10001",
-      "action": "LOGIN",
-      "timestamp": "2026-08-28T06:53:03.005Z",
-      "metadata": {
-        "email": "member@amrfitness.local"
-      }
-    },
-    {
-      "id": "AUDIT-962727",
-      "userId": "USR-10001",
-      "action": "PROFILE_UPDATE",
-      "timestamp": "2026-08-28T06:49:48.071Z",
-      "metadata": {
-        "action": "INSECURE_PASSWORD_RESET"
-      }
-    },
-    {
-      "id": "AUDIT-404855",
-      "userId": "USR-10001",
-      "action": "LOGOUT",
-      "timestamp": "2026-08-28T06:47:42.577Z"
-    },
-    {
-      "id": "AUDIT-586209",
-      "userId": "USR-10001",
-      "action": "LOGIN",
-      "timestamp": "2026-08-28T06:44:43.275Z",
-      "metadata": {
-        "email": "member@amrfitness.local"
-      }
-    },
-    {
-      "id": "AUDIT-721099",
-      "userId": "USR-10001",
-      "action": "PROFILE_UPDATE",
-      "timestamp": "2026-08-28T06:44:37.869Z",
-      "metadata": {
-        "action": "INSECURE_PASSWORD_RESET"
-      }
-    },
-    {
-      "id": "AUDIT-400188",
-      "userId": "USR-10000",
-      "action": "LOGOUT",
-      "timestamp": "2026-08-28T06:44:23.149Z"
-    },
-    {
-      "id": "AUDIT-938295",
-      "userId": "USR-10000",
-      "action": "CLASS_UPDATED",
-      "timestamp": "2026-08-28T06:41:47.385Z",
-      "metadata": {
-        "classId": "CLS-10001"
-      }
-    },
-    {
-      "id": "AUDIT-236335",
-      "userId": "USR-10000",
-      "action": "LOGIN",
-      "timestamp": "2026-08-28T06:18:53.859Z",
-      "metadata": {
-        "email": "admin@amrfitness.local"
-      }
-    },
-    {
-      "id": "AUDIT-153812",
-      "userId": "USR-10001",
-      "action": "LOGOUT",
-      "timestamp": "2026-08-28T06:06:55.934Z"
-    },
-    {
-      "id": "AUDIT-898034",
-      "userId": "USR-10001",
-      "action": "MEMBERSHIP_PURCHASE",
-      "timestamp": "2026-08-28T05:58:30.955Z",
-      "metadata": {
-        "planId": "PLAN-10003",
-        "subscriptionId": "SUB-99948",
-        "paymentId": "PAY-28631",
-        "amountPaise": 0
-      }
-    },
-    {
-      "id": "AUDIT-622667",
-      "userId": "USR-10001",
-      "action": "LOGIN",
-      "timestamp": "2026-08-28T05:55:19.827Z",
-      "metadata": {
-        "email": "member@amrfitness.local"
-      }
-    },
-    {
-      "id": "AUDIT-596238",
-      "userId": "USR-10001",
-      "action": "LOGOUT",
-      "timestamp": "2026-08-28T05:52:45.177Z"
-    },
-    {
-      "id": "AUDIT-136736",
-      "userId": "USR-10001",
-      "action": "LOGIN",
-      "timestamp": "2026-08-28T05:44:27.603Z",
-      "metadata": {
-        "email": "member@amrfitness.local"
-      }
-    },
-    {
-      "id": "AUDIT-738018",
-      "userId": "USR-10001",
-      "action": "LOGOUT",
-      "timestamp": "2026-08-26T17:15:05.409Z"
-    },
-    {
-      "id": "AUDIT-358450",
-      "userId": "USR-10001",
-      "action": "LOGIN",
-      "timestamp": "2026-08-26T17:11:34.588Z",
-      "metadata": {
-        "email": "member@amrfitness.local"
-      }
-    },
     {
       "id": "AUDIT-10001",
       "userId": "USR-10001",
       "action": "LOGIN",
-      "timestamp": "2026-08-26T04:08:18.344Z",
+      "timestamp": "2026-09-09T06:42:26.456Z",
       "metadata": {
         "ip": "127.0.0.1",
         "userAgent": "MaheshFitnessSim/1.0"
       }
     },
     {
-      "id": "AUDIT-10002",
-      "userId": "USR-10001",
-      "action": "MEMBERSHIP_PURCHASE",
-      "timestamp": "2026-06-01T00:00:00.000Z",
-      "metadata": {
-        "planId": "PLAN-10002",
-        "subscriptionId": "SUB-10001",
-        "amountPaise": 749900
-      }
-    },
-    {
-      "id": "AUDIT-10003",
-      "userId": "USR-10001",
-      "action": "CLASS_BOOKED",
-      "timestamp": "2026-08-24T04:08:18.542Z",
-      "metadata": {
-        "classId": "CLS-10001",
-        "bookingId": "BOOK-10001"
-      }
-    },
-    {
-      "id": "TEST_CONCURRENT_0_1787717298568",
+      "id": "TEST_CONCURRENT_0_1788936311406",
       "userId": "USR-TEST",
       "action": "LOGIN",
-      "timestamp": "2026-08-26T04:08:18.568Z"
+      "timestamp": "2026-09-09T06:45:11.406Z"
     },
     {
-      "id": "TEST_CONCURRENT_1_1787717298568",
+      "id": "TEST_CONCURRENT_1_1788936311406",
       "userId": "USR-TEST",
       "action": "LOGIN",
-      "timestamp": "2026-08-26T04:08:18.568Z"
+      "timestamp": "2026-09-09T06:45:11.406Z"
     },
     {
-      "id": "TEST_CONCURRENT_2_1787717298568",
+      "id": "TEST_CONCURRENT_2_1788936311406",
       "userId": "USR-TEST",
       "action": "LOGIN",
-      "timestamp": "2026-08-26T04:08:18.568Z"
+      "timestamp": "2026-09-09T06:45:11.406Z"
     },
     {
-      "id": "TEST_CONCURRENT_3_1787717298568",
+      "id": "TEST_CONCURRENT_3_1788936311406",
       "userId": "USR-TEST",
       "action": "LOGIN",
-      "timestamp": "2026-08-26T04:08:18.568Z"
+      "timestamp": "2026-09-09T06:45:11.406Z"
     },
     {
-      "id": "TEST_CONCURRENT_4_1787717298568",
+      "id": "TEST_CONCURRENT_4_1788936311406",
       "userId": "USR-TEST",
       "action": "LOGIN",
-      "timestamp": "2026-08-26T04:08:18.568Z"
+      "timestamp": "2026-09-09T06:45:11.406Z"
     },
     {
-      "id": "TEST_CONCURRENT_5_1787717298568",
+      "id": "TEST_CONCURRENT_5_1788936311406",
       "userId": "USR-TEST",
       "action": "LOGIN",
-      "timestamp": "2026-08-26T04:08:18.568Z"
+      "timestamp": "2026-09-09T06:45:11.406Z"
     },
     {
-      "id": "TEST_CONCURRENT_6_1787717298568",
+      "id": "TEST_CONCURRENT_6_1788936311406",
       "userId": "USR-TEST",
       "action": "LOGIN",
-      "timestamp": "2026-08-26T04:08:18.568Z"
+      "timestamp": "2026-09-09T06:45:11.406Z"
     },
     {
-      "id": "TEST_CONCURRENT_7_1787717298568",
+      "id": "TEST_CONCURRENT_7_1788936311406",
       "userId": "USR-TEST",
       "action": "LOGIN",
-      "timestamp": "2026-08-26T04:08:18.568Z"
+      "timestamp": "2026-09-09T06:45:11.406Z"
     },
     {
-      "id": "TEST_CONCURRENT_8_1787717298568",
+      "id": "TEST_CONCURRENT_8_1788936311406",
       "userId": "USR-TEST",
       "action": "LOGIN",
-      "timestamp": "2026-08-26T04:08:18.568Z"
+      "timestamp": "2026-09-09T06:45:11.406Z"
     },
     {
-      "id": "TEST_CONCURRENT_9_1787717298568",
+      "id": "TEST_CONCURRENT_9_1788936311406",
       "userId": "USR-TEST",
       "action": "LOGIN",
-      "timestamp": "2026-08-26T04:08:18.568Z"
-    },
-    {
-      "id": "TEST_CONCURRENT_0_1787761394659",
-      "userId": "USR-TEST",
-      "action": "LOGIN",
-      "timestamp": "2026-08-26T16:23:14.659Z"
-    },
-    {
-      "id": "TEST_CONCURRENT_1_1787761394659",
-      "userId": "USR-TEST",
-      "action": "LOGIN",
-      "timestamp": "2026-08-26T16:23:14.659Z"
-    },
-    {
-      "id": "TEST_CONCURRENT_2_1787761394659",
-      "userId": "USR-TEST",
-      "action": "LOGIN",
-      "timestamp": "2026-08-26T16:23:14.659Z"
-    },
-    {
-      "id": "TEST_CONCURRENT_3_1787761394659",
-      "userId": "USR-TEST",
-      "action": "LOGIN",
-      "timestamp": "2026-08-26T16:23:14.659Z"
-    },
-    {
-      "id": "TEST_CONCURRENT_4_1787761394659",
-      "userId": "USR-TEST",
-      "action": "LOGIN",
-      "timestamp": "2026-08-26T16:23:14.659Z"
-    },
-    {
-      "id": "TEST_CONCURRENT_5_1787761394659",
-      "userId": "USR-TEST",
-      "action": "LOGIN",
-      "timestamp": "2026-08-26T16:23:14.659Z"
-    },
-    {
-      "id": "TEST_CONCURRENT_6_1787761394659",
-      "userId": "USR-TEST",
-      "action": "LOGIN",
-      "timestamp": "2026-08-26T16:23:14.659Z"
-    },
-    {
-      "id": "TEST_CONCURRENT_7_1787761394659",
-      "userId": "USR-TEST",
-      "action": "LOGIN",
-      "timestamp": "2026-08-26T16:23:14.659Z"
-    },
-    {
-      "id": "TEST_CONCURRENT_8_1787761394659",
-      "userId": "USR-TEST",
-      "action": "LOGIN",
-      "timestamp": "2026-08-26T16:23:14.659Z"
-    },
-    {
-      "id": "TEST_CONCURRENT_9_1787761394659",
-      "userId": "USR-TEST",
-      "action": "LOGIN",
-      "timestamp": "2026-08-26T16:23:14.659Z"
-    },
-    {
-      "id": "TEST_CONCURRENT_0_1787894388986",
-      "userId": "USR-TEST",
-      "action": "LOGIN",
-      "timestamp": "2026-08-28T05:19:48.986Z"
-    },
-    {
-      "id": "TEST_CONCURRENT_1_1787894388986",
-      "userId": "USR-TEST",
-      "action": "LOGIN",
-      "timestamp": "2026-08-28T05:19:48.986Z"
-    },
-    {
-      "id": "TEST_CONCURRENT_2_1787894388986",
-      "userId": "USR-TEST",
-      "action": "LOGIN",
-      "timestamp": "2026-08-28T05:19:48.986Z"
-    },
-    {
-      "id": "TEST_CONCURRENT_3_1787894388986",
-      "userId": "USR-TEST",
-      "action": "LOGIN",
-      "timestamp": "2026-08-28T05:19:48.986Z"
-    },
-    {
-      "id": "TEST_CONCURRENT_4_1787894388986",
-      "userId": "USR-TEST",
-      "action": "LOGIN",
-      "timestamp": "2026-08-28T05:19:48.986Z"
-    },
-    {
-      "id": "TEST_CONCURRENT_5_1787894388986",
-      "userId": "USR-TEST",
-      "action": "LOGIN",
-      "timestamp": "2026-08-28T05:19:48.986Z"
-    },
-    {
-      "id": "TEST_CONCURRENT_6_1787894388986",
-      "userId": "USR-TEST",
-      "action": "LOGIN",
-      "timestamp": "2026-08-28T05:19:48.986Z"
-    },
-    {
-      "id": "TEST_CONCURRENT_7_1787894388986",
-      "userId": "USR-TEST",
-      "action": "LOGIN",
-      "timestamp": "2026-08-28T05:19:48.986Z"
-    },
-    {
-      "id": "TEST_CONCURRENT_8_1787894388986",
-      "userId": "USR-TEST",
-      "action": "LOGIN",
-      "timestamp": "2026-08-28T05:19:48.986Z"
-    },
-    {
-      "id": "TEST_CONCURRENT_9_1787894388986",
-      "userId": "USR-TEST",
-      "action": "LOGIN",
-      "timestamp": "2026-08-28T05:19:48.986Z"
-    },
-    {
-      "id": "TEST_CONCURRENT_0_1787895129392",
-      "userId": "USR-TEST",
-      "action": "LOGIN",
-      "timestamp": "2026-08-28T05:32:09.392Z"
-    },
-    {
-      "id": "TEST_CONCURRENT_1_1787895129393",
-      "userId": "USR-TEST",
-      "action": "LOGIN",
-      "timestamp": "2026-08-28T05:32:09.393Z"
-    },
-    {
-      "id": "TEST_CONCURRENT_2_1787895129393",
-      "userId": "USR-TEST",
-      "action": "LOGIN",
-      "timestamp": "2026-08-28T05:32:09.393Z"
-    },
-    {
-      "id": "TEST_CONCURRENT_3_1787895129393",
-      "userId": "USR-TEST",
-      "action": "LOGIN",
-      "timestamp": "2026-08-28T05:32:09.393Z"
-    },
-    {
-      "id": "TEST_CONCURRENT_4_1787895129393",
-      "userId": "USR-TEST",
-      "action": "LOGIN",
-      "timestamp": "2026-08-28T05:32:09.393Z"
-    },
-    {
-      "id": "TEST_CONCURRENT_5_1787895129393",
-      "userId": "USR-TEST",
-      "action": "LOGIN",
-      "timestamp": "2026-08-28T05:32:09.393Z"
-    },
-    {
-      "id": "TEST_CONCURRENT_6_1787895129393",
-      "userId": "USR-TEST",
-      "action": "LOGIN",
-      "timestamp": "2026-08-28T05:32:09.393Z"
-    },
-    {
-      "id": "TEST_CONCURRENT_7_1787895129393",
-      "userId": "USR-TEST",
-      "action": "LOGIN",
-      "timestamp": "2026-08-28T05:32:09.393Z"
-    },
-    {
-      "id": "TEST_CONCURRENT_8_1787895129393",
-      "userId": "USR-TEST",
-      "action": "LOGIN",
-      "timestamp": "2026-08-28T05:32:09.393Z"
-    },
-    {
-      "id": "TEST_CONCURRENT_9_1787895129393",
-      "userId": "USR-TEST",
-      "action": "LOGIN",
-      "timestamp": "2026-08-28T05:32:09.393Z"
-    },
-    {
-      "id": "TEST_CONCURRENT_0_1787895449008",
-      "userId": "USR-TEST",
-      "action": "LOGIN",
-      "timestamp": "2026-08-28T05:37:29.008Z"
-    },
-    {
-      "id": "TEST_CONCURRENT_1_1787895449008",
-      "userId": "USR-TEST",
-      "action": "LOGIN",
-      "timestamp": "2026-08-28T05:37:29.008Z"
-    },
-    {
-      "id": "TEST_CONCURRENT_2_1787895449008",
-      "userId": "USR-TEST",
-      "action": "LOGIN",
-      "timestamp": "2026-08-28T05:37:29.008Z"
-    },
-    {
-      "id": "TEST_CONCURRENT_3_1787895449008",
-      "userId": "USR-TEST",
-      "action": "LOGIN",
-      "timestamp": "2026-08-28T05:37:29.008Z"
-    },
-    {
-      "id": "TEST_CONCURRENT_4_1787895449008",
-      "userId": "USR-TEST",
-      "action": "LOGIN",
-      "timestamp": "2026-08-28T05:37:29.008Z"
-    },
-    {
-      "id": "TEST_CONCURRENT_5_1787895449008",
-      "userId": "USR-TEST",
-      "action": "LOGIN",
-      "timestamp": "2026-08-28T05:37:29.008Z"
-    },
-    {
-      "id": "TEST_CONCURRENT_6_1787895449008",
-      "userId": "USR-TEST",
-      "action": "LOGIN",
-      "timestamp": "2026-08-28T05:37:29.008Z"
-    },
-    {
-      "id": "TEST_CONCURRENT_7_1787895449008",
-      "userId": "USR-TEST",
-      "action": "LOGIN",
-      "timestamp": "2026-08-28T05:37:29.008Z"
-    },
-    {
-      "id": "TEST_CONCURRENT_8_1787895449008",
-      "userId": "USR-TEST",
-      "action": "LOGIN",
-      "timestamp": "2026-08-28T05:37:29.008Z"
-    },
-    {
-      "id": "TEST_CONCURRENT_9_1787895449008",
-      "userId": "USR-TEST",
-      "action": "LOGIN",
-      "timestamp": "2026-08-28T05:37:29.008Z"
+      "timestamp": "2026-09-09T06:45:11.406Z"
     }
   ],
   "metadata": {
-    "initializedAt": "2026-08-26T04:08:18.344Z",
+    "initializedAt": "2026-09-09T06:42:26.456Z",
     "version": "1.0.0"
   }
 }

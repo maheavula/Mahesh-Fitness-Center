@@ -161,31 +161,7 @@ export async function ensureSeededData(): Promise<void> {
     }
   ];
 
-  // 3. Subscriptions & Payments for Demo Member
-  const demoSubscription: MemberSubscription = {
-    id: 'SUB-10001',
-    memberId: 'MEM-10001',
-    planId: 'PLAN-10002', // Premium
-    status: 'active',
-    startDate: '2026-06-01T00:00:00.000Z',
-    endDate: '2026-11-01T00:00:00.000Z',
-    autoRenew: true,
-    createdAt: '2026-06-01T00:00:00.000Z'
-  };
-
-  const demoPayment: Payment = {
-    id: 'PAY-10001',
-    memberId: 'MEM-10001',
-    membershipId: 'SUB-10001',
-    amountPaise: 749900,
-    currency: 'INR',
-    status: 'completed',
-    method: 'simulated_card',
-    description: '3-Month Premium Membership Subscription',
-    createdAt: '2026-06-01T00:00:00.000Z'
-  };
-
-  // Subscriptions for extra members
+  // 3. Subscriptions & Payments for extra members (Demo member starts with no active membership so trainees can test subscription & price bypass)
   const extraSubscriptions: MemberSubscription[] = [];
   const extraPayments: Payment[] = [];
 
@@ -200,7 +176,7 @@ export async function ensureSeededData(): Promise<void> {
       planId: plan.id,
       status: 'active',
       startDate: '2026-05-15T00:00:00.000Z',
-      endDate: '2026-08-15T00:00:00.000Z',
+      endDate: '2026-11-15T00:00:00.000Z',
       autoRenew: false,
       createdAt: '2026-05-15T00:00:00.000Z'
     });
@@ -218,8 +194,8 @@ export async function ensureSeededData(): Promise<void> {
     });
   });
 
-  const subscriptions = [demoSubscription, ...extraSubscriptions];
-  const payments = [demoPayment, ...extraPayments];
+  const subscriptions = [...extraSubscriptions];
+  const payments = [...extraPayments];
 
   // 4. Trainers
   const trainers: Trainer[] = [
@@ -386,48 +362,22 @@ export async function ensureSeededData(): Promise<void> {
   // 6. Bookings & Attendance
   const bookings: Booking[] = [
     {
-      id: 'BOOK-10001',
-      classId: 'CLS-10001',
-      memberId: 'MEM-10001',
-      status: 'confirmed',
-      bookedAt: new Date(Date.now() - 172800000).toISOString(),
-      cancelledAt: null
-    },
-    {
-      id: 'BOOK-10002',
-      classId: 'CLS-10003',
-      memberId: 'MEM-10001',
-      status: 'confirmed',
-      bookedAt: new Date(Date.now() - 86400000).toISOString(),
-      cancelledAt: null
-    },
-    {
       id: 'BOOK-10003',
       classId: 'CLS-10002',
-      memberId: 'MEM-10002',
+      memberId: 'kmc-144',
       status: 'confirmed',
       bookedAt: new Date(Date.now() - 86400000).toISOString(),
       cancelledAt: null
     }
   ];
 
-  const attendance: Attendance[] = [
-    {
-      id: 'ATT-10001',
-      memberId: 'MEM-10001',
-      classId: 'CLS-10001',
-      bookingId: 'BOOK-10001',
-      status: 'present',
-      checkedInAt: `${todayStr}T06:55:00.000Z`,
-      recordedAt: `${todayStr}T07:05:00.000Z`
-    }
-  ];
+  const attendance: Attendance[] = [];
 
-  // 7. Simulated Member Activities
+  // 7. Simulated Member Activities (Available for IDOR data exploration)
   const activities: Activity[] = [
     {
       id: 'ACT-10001',
-      memberId: 'MEM-10001',
+      memberId: 'kmc-143',
       type: 'workout',
       durationMinutes: 60,
       calories: 450,
@@ -436,7 +386,7 @@ export async function ensureSeededData(): Promise<void> {
     },
     {
       id: 'ACT-10002',
-      memberId: 'MEM-10001',
+      memberId: 'kmc-143',
       type: 'cardio',
       durationMinutes: 45,
       calories: 380,
@@ -445,7 +395,7 @@ export async function ensureSeededData(): Promise<void> {
     },
     {
       id: 'ACT-10003',
-      memberId: 'MEM-10001',
+      memberId: 'kmc-144',
       type: 'strength',
       durationMinutes: 75,
       calories: 520,
@@ -462,20 +412,6 @@ export async function ensureSeededData(): Promise<void> {
       action: 'LOGIN',
       timestamp: now,
       metadata: { ip: '127.0.0.1', userAgent: 'MaheshFitnessSim/1.0' }
-    },
-    {
-      id: 'AUDIT-10002',
-      userId: 'USR-10001',
-      action: 'MEMBERSHIP_PURCHASE',
-      timestamp: '2026-06-01T00:00:00.000Z',
-      metadata: { planId: 'PLAN-10002', subscriptionId: 'SUB-10001', amountPaise: 749900 }
-    },
-    {
-      id: 'AUDIT-10003',
-      userId: 'USR-10001',
-      action: 'CLASS_BOOKED',
-      timestamp: new Date(Date.now() - 172800000).toISOString(),
-      metadata: { classId: 'CLS-10001', bookingId: 'BOOK-10001' }
     }
   ];
 
